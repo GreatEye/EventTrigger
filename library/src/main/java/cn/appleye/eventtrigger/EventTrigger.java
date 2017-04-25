@@ -15,4 +15,33 @@ package cn.appleye.eventtrigger;
  */
 
 public class EventTrigger {
+    private static volatile EventTrigger sInstance;
+
+    private EventTrigger(){}
+
+    public static EventTrigger getInstance(){
+        if(sInstance == null) {
+            synchronized (EventTrigger.class){
+                if(sInstance == null){
+                    sInstance = new EventTrigger();
+                }
+            }
+        }
+
+        return sInstance;
+    }
+
+    /**
+     * 为当前实例注册触发器
+     * */
+    public void register(Object object){
+
+    }
+
+    /**
+     * 当前实例注销触发器
+     * */
+    public void unregister(Object object){
+
+    }
 }
