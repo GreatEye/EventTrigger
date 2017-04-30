@@ -39,7 +39,7 @@ public class EventTrigger {
     }
 
     /**
-     * 当前实例注销触发器
+     * 为当前实例注销触发器
      * */
     public void unregister(Object object){
 
