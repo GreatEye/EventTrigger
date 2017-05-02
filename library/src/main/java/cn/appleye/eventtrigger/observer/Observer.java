@@ -1,7 +1,6 @@
-package cn.appleye.eventtrigger.subscriber;
+package cn.appleye.eventtrigger.observer;
 
-import java.util.HashMap;
-import java.util.Map;
+import cn.appleye.eventtrigger.triggers.Trigger;
 
 /**
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,19 +12,16 @@ import java.util.Map;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * @author liuliaopu
- * @date 2017/4/30
+ * @author feiyu
+ * @date 2017/5/2
+ * 监听触发器数据观察者
  */
 
-public class SubscriberMethodFinder {
+public interface Observer {
     /**
-     * 获取当前类的注册过触发器的方法信息
-     * @param subscriber 订阅者
-     * @return 方法信息(<注册的类，方法信息>)
+     * 回调触发器结果
+     * @param trigger 触发器
+     * @param result 结果
      * */
-    public Map<Class, SubscriberMethod> findSubscriberMethod(Class<?> subscriber) {
-        HashMap<Class, SubscriberMethod> subscriberMethodHashMap = new HashMap<>();
-
-        return subscriberMethodHashMap;
-    }
+    void apply(Trigger trigger, Object result);
 }

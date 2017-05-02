@@ -1,5 +1,12 @@
 package cn.appleye.eventtrigger;
 
+import java.util.Map;
+
+import cn.appleye.eventtrigger.observer.Observer;
+import cn.appleye.eventtrigger.subscriber.SubscriberMethod;
+import cn.appleye.eventtrigger.subscriber.SubscriberMethodFinder;
+import cn.appleye.eventtrigger.triggers.Trigger;
+
 /**
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,11 +21,18 @@ package cn.appleye.eventtrigger;
  * @date 2017/4/24
  */
 
-public class EventTrigger {
+public class EventTrigger implements Observer{
     private static volatile EventTrigger sInstance;
 
-    private EventTrigger(){}
+    private SubscriberMethodFinder mSubscriberMethodFinder;
 
+    private EventTrigger(){
+        mSubscriberMethodFinder = new SubscriberMethodFinder();
+    }
+
+    /**
+     * 获取单例
+     * */
     public static EventTrigger getInstance(){
         if(sInstance == null) {
             synchronized (EventTrigger.class){
@@ -35,6 +49,17 @@ public class EventTrigger {
      * 为当前实例注册触发器
      * */
     public void register(Object object){
+        Class<?> subscriberClass = object.getClass();
+        Map<Class, SubscriberMethod> subscriberMethodMap = mSubscriberMethodFinder.findSubscriberMethod(subscriberClass);
+    }
+
+    /**
+     * 触发器派发接口
+     * @param trigger 触发器
+     * @param result 结果
+     * */
+    @Override
+    public void apply(Trigger trigger, Object result){
 
     }
 

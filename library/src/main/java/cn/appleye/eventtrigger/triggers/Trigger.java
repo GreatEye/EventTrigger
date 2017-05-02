@@ -12,6 +12,7 @@ package cn.appleye.eventtrigger.triggers;
  *
  * @author liuliaopu
  * @date 2017/4/25
+ * 触发器接口
  */
 
 public interface Trigger{
@@ -21,7 +22,7 @@ public interface Trigger{
     String getName();
 
     /**
-     * 触发回调
+     * 触发回调，每次变化的时候需要调用，不然不会将结果派发
      * @param result 结果,用对象封装起来
      * */
     void trigger(Object result);

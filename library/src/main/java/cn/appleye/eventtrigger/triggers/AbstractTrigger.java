@@ -13,20 +13,24 @@ import cn.appleye.eventtrigger.observer.Observer;
  * limitations under the License.
  *
  * @author feiyu
- * @date 2017/4/25
- * 网络状态变化触发器
+ * @date 2017/5/2
+ * 触发器抽象类，保证每次调用触发器的{@link #trigger(Object)}时，能够派发结果
  */
 
-public class NetworkTrigger extends AbstractTrigger{
-    private static final String TAG = "NetworkTrigger";
+public abstract class AbstractTrigger implements Trigger{
+    private Observer mObserver;
 
-    public NetworkTrigger(Observer observer) {
-        super(observer);
+    public AbstractTrigger(Observer observer){
+        if(observer == null) {
+            throw new IllegalArgumentException("observer can not be null");
+        }
+
+        mObserver = observer;
     }
 
     @Override
-    public String getName() {
-        return "NetworkTrigger";
+    public void trigger(Object result){
+        //派发结果
+        mObserver.apply(this, result);
     }
-
 }
