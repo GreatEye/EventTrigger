@@ -15,4 +15,13 @@ package cn.appleye.eventtrigger.subscriber;
  */
 
 public class SubscriberInfo {
+    /**所属对象*/
+    public final Object mObject;
+    /**方法*/
+    public final SubscriberMethod mSubscriberMethod;
+
+    public SubscriberInfo(Object object, SubscriberMethod subscriberMethod){
+        mObject = object;
+        mSubscriberMethod = subscriberMethod;
+    }
 }

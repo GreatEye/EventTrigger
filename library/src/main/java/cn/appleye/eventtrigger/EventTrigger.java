@@ -1,8 +1,15 @@
 package cn.appleye.eventtrigger;
 
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
+import cn.appleye.eventtrigger.common.LoopMode;
 import cn.appleye.eventtrigger.observer.Observer;
+import cn.appleye.eventtrigger.subscriber.SubscriberInfo;
 import cn.appleye.eventtrigger.subscriber.SubscriberMethod;
 import cn.appleye.eventtrigger.subscriber.SubscriberMethodFinder;
 import cn.appleye.eventtrigger.triggers.Trigger;
@@ -24,10 +31,15 @@ import cn.appleye.eventtrigger.triggers.Trigger;
 public class EventTrigger implements Observer{
     private static volatile EventTrigger sInstance;
 
+    /**订阅方法查找器*/
     private SubscriberMethodFinder mSubscriberMethodFinder;
+
+    /**所有触发器对应方法集合*/
+    private Map<Class, Set<SubscriberInfo>> mTotalSubscriberMethodMap = new HashMap<>();
 
     private EventTrigger(){
         mSubscriberMethodFinder = new SubscriberMethodFinder();
+        mTotalSubscriberMethodMap.clear();
     }
 
     /**
@@ -50,23 +62,70 @@ public class EventTrigger implements Observer{
      * */
     public void register(Object object){
         Class<?> subscriberClass = object.getClass();
-        Map<Class, SubscriberMethod> subscriberMethodMap = mSubscriberMethodFinder.findSubscriberMethod(subscriberClass);
+        List<SubscriberMethod> subscriberMethodList = mSubscriberMethodFinder.findSubscriberMethod(subscriberClass);
+        synchronized (this){
+            for(SubscriberMethod subscriberMethod : subscriberMethodList) {
+                Set<SubscriberInfo> subscriberMethodSet =
+                        mTotalSubscriberMethodMap.get(subscriberMethod.mTriggerClass);
+                if(subscriberMethodSet == null) {
+                    subscriberMethodSet = new HashSet<>();
+                    mTotalSubscriberMethodMap.put(subscriberMethod.mTriggerClass, subscriberMethodSet);
+                }
+
+                SubscriberInfo subscriberInfo = new SubscriberInfo(object, subscriberMethod);
+                subscriberMethodSet.add(subscriberInfo);
+            }
+        }
     }
 
     /**
      * 触发器派发接口
      * @param trigger 触发器
-     * @param result 结果
+     * @param result 结果参数
      * */
     @Override
     public void apply(Trigger trigger, Object result){
-
+        Class<?> triggerClass = trigger.getClass();
+        Set<SubscriberInfo> subscriberInfoSet = mTotalSubscriberMethodMap.get(triggerClass);
+        if(subscriberInfoSet != null) {
+            //遍历该触发器对应的所有方法，然后调用方法
+            Iterator<SubscriberInfo> it = subscriberInfoSet.iterator();
+            while(it.hasNext()) {
+                SubscriberInfo subscriberInfo = it.next();
+                Object object = subscriberInfo.mObject;
+                SubscriberMethod subscriberMethod = subscriberInfo.mSubscriberMethod;
+                //把try..catch..放在循环体内，可以避免对后续方法调用造成影响
+                try{
+                    //调用方法接口
+                    subscriberMethod.mMethod.invoke(object, result);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                //只执行一次的方法，则执行完把它去掉
+                if(LoopMode.ONCE == subscriberMethod.mLoopMode){
+                    it.remove();
+                }
+            }
+        }
     }
 
     /**
      * 为当前实例注销触发器
      * */
     public void unregister(Object object){
-
+        synchronized (this) {
+            //遍历所有的方法，注销掉当前对象包含的方法
+            Iterator<Set<SubscriberInfo>> setIterator = mTotalSubscriberMethodMap.values().iterator();
+            while(setIterator.hasNext()) {
+                Set<SubscriberInfo> subscriberInfoSet = setIterator.next();
+                Iterator<SubscriberInfo> subscriberInfoIterator = subscriberInfoSet.iterator();
+                while(subscriberInfoIterator.hasNext()) {
+                    SubscriberInfo subscriberInfo = subscriberInfoIterator.next();
+                    if(subscriberInfo.mObject == object) {
+                        subscriberInfoIterator.remove();
+                    }
+                }
+            }
+        }
     }
 }

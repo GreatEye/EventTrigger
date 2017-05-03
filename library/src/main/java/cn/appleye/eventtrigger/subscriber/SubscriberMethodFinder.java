@@ -1,7 +1,7 @@
 package cn.appleye.eventtrigger.subscriber;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -21,11 +21,11 @@ public class SubscriberMethodFinder {
     /**
      * 获取当前类的注册过触发器的方法信息
      * @param subscriber 订阅者
-     * @return 方法信息(<注册的类，方法信息>)
+     * @return 方法信息
      * */
-    public Map<Class, SubscriberMethod> findSubscriberMethod(Class<?> subscriber) {
-        HashMap<Class, SubscriberMethod> subscriberMethodHashMap = new HashMap<>();
+    public List<SubscriberMethod> findSubscriberMethod(Class<?> subscriber) {
+        List<SubscriberMethod> subscriberMethodList = new ArrayList<>();
 
-        return subscriberMethodHashMap;
+        return subscriberMethodList;
     }
 }
