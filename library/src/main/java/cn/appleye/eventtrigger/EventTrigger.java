@@ -26,6 +26,9 @@ import cn.appleye.eventtrigger.triggers.Trigger;
  *
  * @author liuliaopu
  * @date 2017/4/24
+ * EventTrigger是一个事件型触发器，当定义的触发器出发动作时，会自动调用在类中订阅过的对应的方法
+ * 在方法中订阅方法时，根据注解{@link cn.appleye.eventtrigger.annotations.TriggerSubscribe}
+ * 定义触发器对应的类，和循环类型
  */
 
 public class EventTrigger implements Observer{
