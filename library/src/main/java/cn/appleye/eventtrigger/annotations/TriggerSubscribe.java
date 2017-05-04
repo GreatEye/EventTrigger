@@ -1,6 +1,9 @@
 package cn.appleye.eventtrigger.annotations;
 
+import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 import cn.appleye.eventtrigger.common.LoopMode;
@@ -20,6 +23,8 @@ import cn.appleye.eventtrigger.common.LoopMode;
  * 触发器注解接口
  */
 
+@Documented
+@Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.METHOD})
 public @interface TriggerSubscribe {
     Class className() default Void.class;
