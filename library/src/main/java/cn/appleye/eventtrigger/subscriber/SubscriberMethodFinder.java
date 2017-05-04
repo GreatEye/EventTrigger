@@ -19,6 +19,7 @@ import cn.appleye.eventtrigger.annotations.TriggerSubscribe;
  *
  * @author liuliaopu
  * @date 2017/4/30
+ * 注册方法查找类
  */
 
 public class SubscriberMethodFinder {
