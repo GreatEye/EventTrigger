@@ -23,7 +23,7 @@ import cn.appleye.eventtrigger.annotations.TriggerSubscribe;
  */
 
 public class SubscriberMethodFinder {
-    //一下是编译器编译产生的方法
+    //以下是编译器编译产生的方法
     private static final int BRIDGE = 0x40;
     private static final int SYNTHETIC = 0x1000;
 
