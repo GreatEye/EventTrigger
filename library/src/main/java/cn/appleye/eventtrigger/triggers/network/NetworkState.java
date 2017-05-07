@@ -17,22 +17,24 @@ package cn.appleye.eventtrigger.triggers.network;
 public class NetworkState {
     /**网络类型*/
     public final NetworkType networkType;
-    /**网络名称*/
-    public final String SSID;
-    /**强度*/
-    public final int level;
-    /**mac地址*/
-    public final String mac;
+    /**数据网络下面的详细网络类型*/
+    public SubNetworkType subNetworkType;
+    /**wifi网络名称*/
+    public String SSID;
+    /**wifi强度*/
+    public int rssi;
+    /**wifi mac地址*/
+    public String mac;
 
-    public NetworkState(NetworkType networkType,
-                        String SSID, int level, String mac) {
+    public NetworkState(NetworkType networkType) {
         this.networkType = networkType;
-        this.SSID = SSID;
-        this.level = level;
-        this.mac = mac;
     }
 
     public enum NetworkType{
-        WIFI, G4, G3, G2, NONE
+        WIFI, MOBILE, NONE//Wifi、无网络
+    }
+
+    public enum SubNetworkType{
+        G4, G3, G2, UNKNOWN //4G、3G、2G、未知
     }
 }
