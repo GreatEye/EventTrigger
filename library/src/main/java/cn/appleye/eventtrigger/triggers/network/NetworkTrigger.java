@@ -27,6 +27,9 @@ import cn.appleye.eventtrigger.triggers.AbstractTrigger;
  * @author feiyu
  * @date 2017/4/25
  * 网络状态变化触发器
+ * 使用该触发器类，需要在AndroidManifest中添加一下权限
+ * <uses-permission android:name="android.permission.access_network_state" />
+ * <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
  */
 
 public class NetworkTrigger extends AbstractTrigger {
@@ -36,9 +39,6 @@ public class NetworkTrigger extends AbstractTrigger {
 
     /**
      * 网络连接状态变化广播接收器
-     * 需要在AndroidManifest中添加一下权限
-     * <uses-permission android:name="android.permission.access_network_state" />
-     * <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
      */
     private BroadcastReceiver mReceiver = new BroadcastReceiver() {
         @Override

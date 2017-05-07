@@ -11,9 +11,13 @@ package cn.appleye.eventtrigger.common;
  * limitations under the License.
  *
  * @author feiyu
- * @date 2017/4/25
+ * @date 2017/5/7
+ * 定义订阅方法对于触发器的严格模式
  */
 
-public class EmptyValue {
-    public static final Integer EMPTY_VALUE = null;
+public enum StrictMode {
+    /**只有实现了{@link cn.appleye.eventtrigger.triggers.Trigger}接口才允许订阅*/
+    STRICT,
+    /**对触发器接口实现无要求*/
+    ALOW_ALL
 }

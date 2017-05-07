@@ -6,6 +6,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import cn.appleye.eventtrigger.annotations.TriggerSubscribe;
+import cn.appleye.eventtrigger.common.StrictMode;
+import cn.appleye.eventtrigger.triggers.Trigger;
 
 /**
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -48,10 +50,19 @@ public class SubscriberMethodFinder {
                         TriggerSubscribe subscribeAnnotation = method.getAnnotation(TriggerSubscribe.class);
                         if(subscribeAnnotation != null) {//方法包含有定义的注解类
                             Class<?> triggerClass = subscribeAnnotation.className();
+                            StrictMode strictMode = subscribeAnnotation.strictMode();
                             if(triggerClass != Void.class) {//定义的触发器类不是空的触发器类，才有意义
+                                if(StrictMode.STRICT == strictMode &&
+                                        !triggerClass.isAssignableFrom(Trigger.class)) {//严格模式未实现了Trigger接口
+                                    String methodName = method.getName();
+                                    throw new IllegalArgumentException("In method " + methodName + ", Trigger class must implement Trigger interface in strict mode");
+                                }
                                 SubscriberMethod subscriberMethod = new SubscriberMethod(method,
                                         subscribeAnnotation.loopMode(), triggerClass);
                                 subscriberMethodList.add(subscriberMethod);//添加到列表中
+                            } else{
+                                String methodName = method.getName();
+                                throw new IllegalArgumentException("In method " + methodName + ", Trigger class must not be Void");
                             }
                         }
                     } else if(method.isAnnotationPresent(TriggerSubscribe.class)) {//参数个数错误

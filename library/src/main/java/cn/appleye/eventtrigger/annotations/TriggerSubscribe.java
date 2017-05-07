@@ -7,6 +7,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 import cn.appleye.eventtrigger.common.LoopMode;
+import cn.appleye.eventtrigger.common.StrictMode;
 
 /**
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -30,4 +31,6 @@ public @interface TriggerSubscribe {
     Class className() default Void.class;
 
     LoopMode loopMode() default LoopMode.ALWAYS;
+
+    StrictMode strictMode() default StrictMode.STRICT;
 }

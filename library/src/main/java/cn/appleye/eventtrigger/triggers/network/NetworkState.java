@@ -12,6 +12,7 @@ package cn.appleye.eventtrigger.triggers.network;
  *
  * @author feiyu
  * @date 2017/5/5
+ * 保存网络状态的类
  */
 
 public class NetworkState {
@@ -36,5 +37,34 @@ public class NetworkState {
 
     public enum SubNetworkType{
         G4, G3, G2, UNKNOWN //4G、3G、2G、未知
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder("{\n");
+
+        if(NetworkType.NONE != networkType) {
+            if(NetworkType.WIFI == networkType) {
+                sb.append("networkType : wifi,\n");
+                sb.append("ssid : " + SSID + ",\n");
+                sb.append("rssi : " + rssi + ",\n");
+                sb.append("mac : " + mac);
+            } else if(NetworkType.MOBILE == networkType) {
+                sb.append("networkType : mobile,\n");
+                if(SubNetworkType.G4 == subNetworkType) {
+                    sb.append("subNetworkType : 4G");
+                }else if(SubNetworkType.G3 == subNetworkType) {
+                    sb.append("subNetworkType : 3G");
+                }else if(SubNetworkType.G2 == subNetworkType){
+                    sb.append("subNetworkType : 2G");
+                }else {
+                    sb.append("subNetworkType : unknown");
+                }
+            }
+        }
+
+        sb.append("\n}");
+
+        return sb.toString();
     }
 }
