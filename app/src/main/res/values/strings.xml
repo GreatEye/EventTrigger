@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">EventTrigger</string>
+    <string name="title_activity_network_trigger_demo">NetworkTriggerDemoActivity</string>
+    <string name="title_activity_demo">DemoActivity</string>
 </resources>

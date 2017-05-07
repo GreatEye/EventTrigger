@@ -53,7 +53,7 @@ public class SubscriberMethodFinder {
                             StrictMode strictMode = subscribeAnnotation.strictMode();
                             if(triggerClass != Void.class) {//定义的触发器类不是空的触发器类，才有意义
                                 if(StrictMode.STRICT == strictMode &&
-                                        !triggerClass.isAssignableFrom(Trigger.class)) {//严格模式未实现了Trigger接口
+                                        !Trigger.class.isAssignableFrom(triggerClass)) {//严格模式未实现了Trigger接口
                                     String methodName = method.getName();
                                     throw new IllegalArgumentException("In method " + methodName + ", Trigger class must implement Trigger interface in strict mode");
                                 }

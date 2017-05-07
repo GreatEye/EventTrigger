@@ -45,22 +45,24 @@ public class NetworkState {
 
         if(NetworkType.NONE != networkType) {
             if(NetworkType.WIFI == networkType) {
-                sb.append("networkType : wifi,\n");
-                sb.append("ssid : " + SSID + ",\n");
-                sb.append("rssi : " + rssi + ",\n");
-                sb.append("mac : " + mac);
+                sb.append("\tnetworkType : wifi,\n");
+                sb.append("\tssid : " + SSID + ",\n");
+                sb.append("\trssi : " + rssi + ",\n");
+                sb.append("\tmac : " + mac);
             } else if(NetworkType.MOBILE == networkType) {
-                sb.append("networkType : mobile,\n");
+                sb.append("\tnetworkType : mobile,\n");
                 if(SubNetworkType.G4 == subNetworkType) {
-                    sb.append("subNetworkType : 4G");
+                    sb.append("\tsubNetworkType : 4G");
                 }else if(SubNetworkType.G3 == subNetworkType) {
-                    sb.append("subNetworkType : 3G");
+                    sb.append("\tsubNetworkType : 3G");
                 }else if(SubNetworkType.G2 == subNetworkType){
-                    sb.append("subNetworkType : 2G");
+                    sb.append("\tsubNetworkType : 2G");
                 }else {
-                    sb.append("subNetworkType : unknown");
+                    sb.append("\tsubNetworkType : unknown");
                 }
             }
+        } else {
+            sb.append("\tnetworkType : none");
         }
 
         sb.append("\n}");
