@@ -7,7 +7,7 @@ import android.widget.TextView;
 
 import java.util.List;
 
-import cn.appleye.eventtrigger.EventTrigger;
+import cn.appleye.eventtrigger.EventTriggerBus;
 import cn.appleye.eventtrigger.annotations.TriggerSubscribe;
 import cn.appleye.eventtrigger.common.LoopMode;
 import cn.appleye.eventtrigger.common.StrictMode;
@@ -18,7 +18,7 @@ import pub.devrel.easypermissions.EasyPermissions;
 public class NetworkTriggerDemoActivity extends AppCompatActivity implements EasyPermissions.PermissionCallbacks {
     private TextView mNetworkView;
     private NetworkTrigger mNetworkTrigger;
-    private EventTrigger mEventTrigger;
+    private EventTriggerBus mEventTriggerBus;
 
     private static final int NETWORK_PERMISSION_REQUEST = 1000;
 
@@ -29,10 +29,10 @@ public class NetworkTriggerDemoActivity extends AppCompatActivity implements Eas
 
         mNetworkView = (TextView) findViewById(R.id.network_info_view);
 
-        mEventTrigger = EventTrigger.getInstance();
-        mNetworkTrigger = new NetworkTrigger(mEventTrigger);
+        mEventTriggerBus = EventTriggerBus.getInstance();
+        mNetworkTrigger = new NetworkTrigger(mEventTriggerBus);
 
-        mEventTrigger.register(this);
+        mEventTriggerBus.register(this);
 
         //检测权限
         String[] networkPermission = new String[]{Manifest.permission.ACCESS_NETWORK_STATE,
@@ -76,6 +76,6 @@ public class NetworkTriggerDemoActivity extends AppCompatActivity implements Eas
         super.onDestroy();
 
         unregisterReceiver();
-        mEventTrigger.unregister(this);
+        mEventTriggerBus.unregister(this);
     }
 }

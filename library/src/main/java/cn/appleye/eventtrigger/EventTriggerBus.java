@@ -31,8 +31,8 @@ import cn.appleye.eventtrigger.triggers.Trigger;
  * 定义触发器对应的类，和循环类型
  */
 
-public class EventTrigger implements Observer{
-    private static volatile EventTrigger sInstance;
+public class EventTriggerBus implements Observer{
+    private static volatile EventTriggerBus sInstance;
 
     /**订阅方法查找器*/
     private SubscriberMethodFinder mSubscriberMethodFinder;
@@ -40,7 +40,7 @@ public class EventTrigger implements Observer{
     /**所有触发器对应方法集合*/
     private Map<Class, Set<SubscriberInfo>> mTotalSubscriberMethodMap = new HashMap<>();
 
-    private EventTrigger(){
+    private EventTriggerBus(){
         mSubscriberMethodFinder = new SubscriberMethodFinder();
         mTotalSubscriberMethodMap.clear();
     }
@@ -48,11 +48,11 @@ public class EventTrigger implements Observer{
     /**
      * 获取单例
      * */
-    public static EventTrigger getInstance(){
+    public static EventTriggerBus getInstance(){
         if(sInstance == null) {
-            synchronized (EventTrigger.class){
+            synchronized (EventTriggerBus.class){
                 if(sInstance == null){
-                    sInstance = new EventTrigger();
+                    sInstance = new EventTriggerBus();
                 }
             }
         }
