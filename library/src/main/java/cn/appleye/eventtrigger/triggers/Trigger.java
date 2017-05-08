@@ -26,4 +26,14 @@ public interface Trigger{
      * @param result 结果,用对象封装起来
      * */
     void trigger(Object result);
+
+    /**
+     * 强制出发
+     * */
+    void forceTrigger();
+
+    /**
+     * 停止触发器
+     * */
+    void stopTrigger();
 }

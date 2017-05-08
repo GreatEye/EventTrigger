@@ -1,5 +1,6 @@
 package cn.appleye.eventtrigger;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -40,9 +41,13 @@ public class EventTriggerBus implements Observer{
     /**所有触发器对应方法集合*/
     private Map<Class, Set<SubscriberInfo>> mTotalSubscriberMethodMap = new HashMap<>();
 
+    /**全局触发器列表*/
+    private List<Trigger> mGlobalTriggers = new ArrayList<>();
+
     private EventTriggerBus(){
         mSubscriberMethodFinder = new SubscriberMethodFinder();
         mTotalSubscriberMethodMap.clear();
+        mGlobalTriggers.clear();
     }
 
     /**
@@ -58,6 +63,51 @@ public class EventTriggerBus implements Observer{
         }
 
         return sInstance;
+    }
+
+    /**
+     * 添加全局Trigger，需要实现{@link Trigger}接口
+     * @param trigger 触发器
+     * */
+    public void addGlobalTrigger(Trigger trigger) {
+        mGlobalTriggers.add(trigger);
+    }
+
+    /**
+     * 强制触发触发器
+     * @param triggerClass 触发器对应的类
+     * */
+    public void forceCallGlobalTrigger(Class<?> triggerClass) {
+        for(Trigger trigger : mGlobalTriggers) {
+            if(trigger.getClass() == triggerClass){
+                trigger.forceTrigger();
+            }
+        }
+    }
+
+    /**
+     * 去掉全局触发器
+     * */
+    public void removeGlobalTrigger(Class<?> triggerClass) {
+        int size = mGlobalTriggers.size();
+        for(int i=size-1; i>=0; i--) {
+            Trigger trigger = mGlobalTriggers.get(i);
+            if(trigger.getClass() == triggerClass) {
+                trigger.stopTrigger();
+                mGlobalTriggers.remove(i);
+            }
+        }
+    }
+
+    /**
+     * 去掉所有的全局触发器
+     * */
+    public void removeAllGlobalTriggers() {
+        for(Trigger trigger : mGlobalTriggers) {
+            trigger.forceTrigger();
+        }
+
+        mGlobalTriggers.clear();
     }
 
     /**

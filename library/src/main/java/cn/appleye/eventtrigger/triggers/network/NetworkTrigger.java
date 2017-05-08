@@ -69,9 +69,6 @@ public class NetworkTrigger extends AbstractTrigger {
         filter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
 
         mContext.registerReceiver(mReceiver, filter);
-
-        //第一次申请注册完成之后，就开始同步网络状态
-        onNetworkChanged();
     }
 
     /**
@@ -157,5 +154,15 @@ public class NetworkTrigger extends AbstractTrigger {
     @Override
     public String getName() {
         return "NetworkTrigger";
+    }
+
+    @Override
+    public void forceTrigger() {
+        onNetworkChanged();
+    }
+
+    @Override
+    public void stopTrigger(){
+        unregisterReceiver();
     }
 }

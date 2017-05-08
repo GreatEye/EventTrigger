@@ -17,7 +17,6 @@ import pub.devrel.easypermissions.EasyPermissions;
 
 public class NetworkTriggerDemoActivity extends AppCompatActivity implements EasyPermissions.PermissionCallbacks {
     private TextView mNetworkView;
-    private NetworkTrigger mNetworkTrigger;
     private EventTriggerBus mEventTriggerBus;
 
     private static final int NETWORK_PERMISSION_REQUEST = 1000;
@@ -30,26 +29,16 @@ public class NetworkTriggerDemoActivity extends AppCompatActivity implements Eas
         mNetworkView = (TextView) findViewById(R.id.network_info_view);
 
         mEventTriggerBus = EventTriggerBus.getInstance();
-        mNetworkTrigger = new NetworkTrigger(mEventTriggerBus);
-
         mEventTriggerBus.register(this);
 
         //检测权限
         String[] networkPermission = new String[]{Manifest.permission.ACCESS_NETWORK_STATE,
         Manifest.permission.ACCESS_WIFI_STATE};
         if(EasyPermissions.hasPermissions(this, networkPermission)){
-            registerReceiver();
+            forceNetworkTrigger();
         } else {//申请权限
             EasyPermissions.requestPermissions(this,"Network Permission", NETWORK_PERMISSION_REQUEST, networkPermission);
         }
-    }
-
-    private void registerReceiver() {
-        mNetworkTrigger.registerReceiver(this);
-    }
-
-    private void unregisterReceiver() {
-        mNetworkTrigger.unregisterReceiver();
     }
 
     @TriggerSubscribe(className = NetworkTrigger.class, loopMode = LoopMode.ALWAYS,
@@ -62,8 +51,15 @@ public class NetworkTriggerDemoActivity extends AppCompatActivity implements Eas
     @Override
     public void onPermissionsGranted(int requestCode, List<String> perms) {
         if(NETWORK_PERMISSION_REQUEST == requestCode) {
-            registerReceiver();
+            forceNetworkTrigger();
         }
+    }
+
+    /**
+     * 强制调用网络状态变化触发器
+     * */
+    private void forceNetworkTrigger(){
+        mEventTriggerBus.forceCallGlobalTrigger(NetworkTrigger.class);
     }
 
     @Override
@@ -74,8 +70,6 @@ public class NetworkTriggerDemoActivity extends AppCompatActivity implements Eas
     @Override
     public void onDestroy() {
         super.onDestroy();
-
-        unregisterReceiver();
         mEventTriggerBus.unregister(this);
     }
 }
