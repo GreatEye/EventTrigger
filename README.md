@@ -60,7 +60,7 @@ public class TimerTriggerActivity extends AppCompatActivity {
 }
 ```
 
-###2.全局触发器用法
+### 2.全局触发器用法
 以NetworkTrigger为例<br/>
 Step 1 : 首先在Application中定义全局触发器
 ```java
