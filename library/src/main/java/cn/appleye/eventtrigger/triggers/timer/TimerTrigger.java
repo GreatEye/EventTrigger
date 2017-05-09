@@ -49,6 +49,7 @@ public class TimerTrigger extends AbstractTrigger{
 
     /**
      * 构造方法
+     * @param interval 时间间隔
      * */
     public TimerTrigger(Observer observer, int interval) {
         super(observer);
