@@ -16,7 +16,7 @@ import cn.appleye.eventtrigger.triggers.network.NetworkTrigger;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * @author feiyu
+ * @author liuliaopu
  * @date 2017/5/8
  */
 
@@ -45,6 +45,7 @@ public class DemoApplication extends Application{
     @Override
     public void onTerminate(){
         super.onTerminate();
+        //移除所有触发器
         EventTriggerBus.getInstance().removeAllGlobalTriggers();
     }
 }

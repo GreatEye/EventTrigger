@@ -29,13 +29,17 @@ public class TimerTriggerActivity extends AppCompatActivity {
 
         mTimerInfoView = (TextView) findViewById(R.id.timer_info_view);
 
+        //获取EventTriggerBus并且注册当前类
         mEventTriggerBus = EventTriggerBus.getInstance();
-        mTimerTrigger = new TimerTrigger(mEventTriggerBus, 1000);
         mEventTriggerBus.register(this);
-
+        //初始化触发器
+        mTimerTrigger = new TimerTrigger(mEventTriggerBus, 1000);//1s间隔
         mTimerTrigger.setup();
     }
 
+    /**
+     * 添加注解，用于过滤和得到要订阅的方法
+     * */
     @TriggerSubscribe(className = TimerTrigger.class)
     public void onTimerInfoChanged(Object result) {
         /*设置值*/
@@ -45,7 +49,7 @@ public class TimerTriggerActivity extends AppCompatActivity {
     @Override
     public void onDestroy() {
         super.onDestroy();
-
+        //停止触发器，并且注销当前类
         mTimerTrigger.stopTrigger();
         mEventTriggerBus.unregister(this);
     }
