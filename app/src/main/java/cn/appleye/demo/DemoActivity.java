@@ -16,7 +16,15 @@ public class DemoActivity extends AppCompatActivity {
         networkTriggerView.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(DemoActivity.this, NetworkTriggerDemoActivity.class));
+                startActivity(new Intent(DemoActivity.this, NetworkTriggerActivity.class));
+            }
+        });
+
+        View timerTriggerView = findViewById(R.id.timer_trigger_view);
+        timerTriggerView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(DemoActivity.this, TimerTriggerActivity.class));
             }
         });
     }

@@ -66,7 +66,7 @@ public class EventTriggerBus implements Observer{
     }
 
     /**
-     * 添加全局Trigger，需要实现{@link Trigger}接口
+     * 添加全局Trigger，需要实现{@link Trigger}接口, 注意内存泄露问题
      * @param trigger 触发器
      * */
     public void addGlobalTrigger(Trigger trigger) {

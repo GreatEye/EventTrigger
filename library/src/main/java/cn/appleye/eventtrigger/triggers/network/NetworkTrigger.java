@@ -54,8 +54,10 @@ public class NetworkTrigger extends AbstractTrigger {
      * 构造方法
      * @param observer 网络变化观察者
      * */
-    public NetworkTrigger(@NonNull Observer observer) {
+    public NetworkTrigger(@NonNull Observer observer, Context context) {
         super(observer);
+
+        mContext = context;
     }
 
     /**
@@ -149,6 +151,11 @@ public class NetworkTrigger extends AbstractTrigger {
                 break;
             }
         }
+    }
+
+    @Override
+    public void setup(){
+        registerReceiver(mContext);
     }
 
     @Override

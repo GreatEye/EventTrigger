@@ -5,15 +5,15 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:gravity="center"
-    tools:context="cn.appleye.demo.NetworkTriggerActivity">
+    tools:context="cn.appleye.demo.TimerTriggerActivity">
 
     <TextView
-        android:id="@+id/network_info_view"
-        android:layout_width="200dip"
+        android:id="@+id/timer_info_view"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:padding="5dip"
-        android:gravity="left|center_vertical"
-        android:hint="Network info"
+        android:gravity="center"
+        android:hint="timer info"
         android:textColorHint="@color/white"
         android:textColor="@color/white"
         android:textSize="16sp"

@@ -22,6 +22,11 @@ public interface Trigger{
     String getName();
 
     /**
+     * 初始化操作
+     * */
+    void setup();
+
+    /**
      * 触发回调，每次变化的时候需要调用，不然不会将结果派发
      * @param result 结果,用对象封装起来
      * */

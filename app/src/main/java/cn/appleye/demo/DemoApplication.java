@@ -3,6 +3,7 @@ package cn.appleye.demo;
 import android.app.Application;
 
 import cn.appleye.eventtrigger.EventTriggerBus;
+import cn.appleye.eventtrigger.triggers.Trigger;
 import cn.appleye.eventtrigger.triggers.network.NetworkTrigger;
 
 /**
@@ -22,6 +23,7 @@ import cn.appleye.eventtrigger.triggers.network.NetworkTrigger;
 public class DemoApplication extends Application{
     private static final String TAG = "DemoApplication";
 
+    @Override
     public void onCreate() {
         super.onCreate();
 
@@ -35,8 +37,8 @@ public class DemoApplication extends Application{
         EventTriggerBus eventTriggerBus = EventTriggerBus.getInstance();
 
         /**添加网络状态变化的触发器*/
-        NetworkTrigger networkTrigger = new NetworkTrigger(eventTriggerBus);
-        networkTrigger.registerReceiver(this);
+        Trigger networkTrigger = new NetworkTrigger(eventTriggerBus, this);
+        networkTrigger.setup();
         eventTriggerBus.addGlobalTrigger(networkTrigger);
     }
 

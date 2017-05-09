@@ -15,7 +15,7 @@ import cn.appleye.eventtrigger.triggers.network.NetworkState;
 import cn.appleye.eventtrigger.triggers.network.NetworkTrigger;
 import pub.devrel.easypermissions.EasyPermissions;
 
-public class NetworkTriggerDemoActivity extends AppCompatActivity implements EasyPermissions.PermissionCallbacks {
+public class NetworkTriggerActivity extends AppCompatActivity implements EasyPermissions.PermissionCallbacks {
     private TextView mNetworkView;
     private EventTriggerBus mEventTriggerBus;
 

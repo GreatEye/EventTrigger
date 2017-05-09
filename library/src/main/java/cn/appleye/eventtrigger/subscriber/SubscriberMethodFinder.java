@@ -46,7 +46,7 @@ public class SubscriberMethodFinder {
                 /*过滤掉不是public和需要忽略的方法*/
                 if((modifiers & Modifier.PUBLIC) != 0 && (modifiers & MODIFIERS_IGNORE) == 0) {
                     Class<?>[] parameterTypes = method.getParameterTypes();//方法参数类型
-                    if(parameterTypes.length == 1) {//允许的参数只有一个，这样的方法
+                    if(parameterTypes.length == 1) {//允许只有一个参数的方法
                         TriggerSubscribe subscribeAnnotation = method.getAnnotation(TriggerSubscribe.class);
                         if(subscribeAnnotation != null) {//方法包含有定义的注解类
                             Class<?> triggerClass = subscribeAnnotation.className();
