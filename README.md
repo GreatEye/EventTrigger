@@ -100,8 +100,9 @@ customTrigger.stopTrigger();
 eventTriggerBus.unregister(object)
 ```
 另外，经常会用到全局触发器，可以在Application初始化的时候，将实例化触发器即可，下面demo有使用详解
-### Demo
-1.单个类中定义触发器 <br/>
+## Demo
+-------------------
+### 1.单个类中定义触发器
 以TimerTrigger为例
 ```java
 import android.support.v7.app.AppCompatActivity;
