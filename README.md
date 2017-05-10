@@ -1,5 +1,105 @@
-# EventTrigger
-基于android的事件触发器，通过自定义触发器，同时在类中添加注册方法来实现触发器发生改变时，进行结果分发。
+# EventTrigger : 为Android设计的事件触发框架
+Android世界中离散发生的事件，我们都可以把它抽象成一个个触发器，事件因为某种原因发生了，可以抽象成触发器因为某种原因触发了，比如定义网络触发器，因为网络发生改变导致触发了网络触发器，因为时间到了，触发了计时触发器，于是便有了EventTrigger。当事件发生(触发)时，触发器处理结果，然后将结果派发给对应的类的方法处理。
+### 开始使用EventTrigger
+EventTrigger使用分为3步
+-------------------
+1. 定义触发器<br/>
+框架中已经自带了触发器，你也可以自定义触发器，实现Trigger接口或者继承AbstractTrigger(实现了Trigger接口)，以TimerTrigger说明
+```java
+public class TimerTrigger extends AbstractTrigger{
+    private static final String TAG = "TimerTrigger";
+
+    /**时间间隔*/
+    private int mInterval;
+    /**是否结束*/
+    private boolean mIsFinished;
+
+    private static final int MSG_DELAY = 1000;
+
+    /**发送延迟消息Handler*/
+    private Handler mHandler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            switch (msg.what) {
+                case MSG_DELAY:{
+                    if(!mIsFinished){
+                        trigger(null);//派发结果
+                        mHandler.sendEmptyMessageDelayed(MSG_DELAY, mInterval);
+                    }
+                    break;
+                }
+            }
+        }
+    };
+
+    /**
+     * 构造方法
+     * @param observer 用于获取当前触发器结果的观察者
+     * @param interval 时间间隔
+     * */
+    public TimerTrigger(Observer observer, int interval) {
+        super(observer);
+
+        mInterval = interval<0?100:interval;//小于0时，定义为100ms
+
+        mIsFinished = false;
+    }
+
+    @Override
+    public String getName() {
+        return "TimerTrigger";
+    }
+
+    @Override
+    public void setup() {//初始化工作
+        if(mIsFinished) {
+            throw new IllegalStateException("the timer has been stopped");
+        }
+
+        mHandler.sendEmptyMessage(MSG_DELAY);
+    }
+
+    @Override
+    public void forceTrigger() {//强制调用
+        //移除延迟消息
+        mHandler.removeMessages(MSG_DELAY);
+        //立刻执行
+        mHandler.sendEmptyMessage(MSG_DELAY);
+    }
+
+    @Override
+    public void stopTrigger() {//结束计时触发器
+        mIsFinished = true;
+    }
+}
+```
+2. 定义类的方法<br/>
+```java
+@TriggerSubscribe(className = CustomTrigger.class, loopMode = LoopMode.ALWAYS,
+        strictMode = StrictMode.STRICT)
+public void onTriggerChanged(Object result) {
+    //TODO:处理派发的结果
+}
+```
+注解TriggerSubscribe参数说明
+* className - 表示目标触发器类
+* loopMode - 表示调用模式， LoopMode.ALWAYS指只要触发器触发就调用，LoopMode.ONCE值调用完一次之后就不再调用
+* strictMode - 表示严格模式， StrictMode.STRICT表示className对应的触发器必须要实现Trigger接口，StrictMode.ALLOW_ALL表示可以是任意触发器，不过所有调用都得自己来实现。
+3. 初始化触发器和注册当前对象<br/>
+EventTriggerBus实现了Observer接口，将其传入到触发器构造方法当中，触发器将结果派发之后传给EventTriggerBus处理
+```java
+EventTriggerBus eventTriggerBus = EventTriggerBus.getInstance();//获取实例
+eventTriggerBus.register(object);//注册当前对象
+
+CustomTrigger customTrigger = new CustomTrigger(eventTriggerBus);
+customTrigger.setup(); //初始化操作
+```
+不再使用的时候，需要注销当前对象和停止触发器
+```java
+customTrigger.stopTrigger();
+eventTriggerBus.unregister(object)
+```
+另外，经常会用到全局触发器，可以在Application初始化的时候，将实例化触发器即可，下面demo有使用详解
 ### Demo
 1.单个类中定义触发器 <br/>
 以TimerTrigger为例
@@ -138,3 +238,9 @@ public class NetworkTriggerActivity extends AppCompatActivity {
     }
 }
 ```
+
+License
+-------
+Copyright (C) 2017-2018 Liaopu Liu
+
+EventTrigger binaries and source code can be used according to the [Apache License, Version 2.0](LICENSE).
