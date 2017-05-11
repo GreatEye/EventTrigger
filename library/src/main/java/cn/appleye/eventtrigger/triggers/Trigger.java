@@ -27,10 +27,10 @@ public interface Trigger{
     void setup();
 
     /**
-     * 触发回调，每次变化的时候需要调用，不然不会将结果派发
+     * 派发结果
      * @param result 结果,用对象封装起来
      * */
-    void trigger(Object result);
+    void dispatch(Object result);
 
     /**
      * 强制出发

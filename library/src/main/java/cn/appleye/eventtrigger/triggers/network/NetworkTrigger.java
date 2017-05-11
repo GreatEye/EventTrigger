@@ -107,7 +107,7 @@ public class NetworkTrigger extends AbstractTrigger {
             networkState = new NetworkState(NetworkState.NetworkType.NONE);
         }
 
-        trigger(networkState);
+        dispatch(networkState);
     }
 
     /**

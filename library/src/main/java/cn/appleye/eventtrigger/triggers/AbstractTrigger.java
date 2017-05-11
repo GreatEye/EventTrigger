@@ -14,7 +14,7 @@ import cn.appleye.eventtrigger.observer.Observer;
  *
  * @author feiyu
  * @date 2017/5/2
- * 触发器抽象类，保证每次调用触发器的{@link #trigger(Object)}时，能够派发结果
+ * 触发器抽象类，保证每次调用触发器的{@link #dispatch(Object)}时，能够派发结果
  */
 
 public abstract class AbstractTrigger implements Trigger{
@@ -29,7 +29,7 @@ public abstract class AbstractTrigger implements Trigger{
     }
 
     @Override
-    public void trigger(Object result){
+    public void dispatch(Object result){
         //派发结果
         mObserver.apply(this, result);
     }
