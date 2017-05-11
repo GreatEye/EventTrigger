@@ -38,7 +38,7 @@ public class TimerTrigger extends AbstractTrigger{
             switch (msg.what) {
                 case MSG_DELAY:{
                     if(!mIsFinished){
-                        dispatch(null);//回调
+                        dispatch(null);//派发结果
                         mHandler.sendEmptyMessageDelayed(MSG_DELAY, mInterval);
                     }
                     break;
