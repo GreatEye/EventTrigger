@@ -15,7 +15,7 @@ import cn.appleye.eventtrigger.common.LoopMode;
  * limitations under the License.
  *
  * @author liuliaopu
- * @date 2017/4/30
+ * date 2017/4/30
  * 方法信息
  */
 

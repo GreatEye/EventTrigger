@@ -20,7 +20,7 @@ import cn.appleye.eventtrigger.common.StrictMode;
  * limitations under the License.
  *
  * @author feiyu
- * @date 2017/4/25
+ * date 2017/4/25
  * 触发器注解接口
  */
 

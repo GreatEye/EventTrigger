@@ -25,11 +25,11 @@ import cn.appleye.eventtrigger.triggers.AbstractTrigger;
  * limitations under the License.
  *
  * @author feiyu
- * @date 2017/4/25
+ * date 2017/4/25
  * 网络状态变化触发器
  * 使用该触发器类，需要在AndroidManifest中添加一下权限
- * <uses-permission android:name="android.permission.access_network_state" />
- * <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+ * &lt;uses-permission android:name="android.permission.access_network_state" /&gt;
+ * &lt;uses-permission android:name="android.permission.ACCESS_WIFI_STATE" /&gt;
  */
 
 public class NetworkTrigger extends AbstractTrigger {
@@ -53,6 +53,7 @@ public class NetworkTrigger extends AbstractTrigger {
     /**
      * 构造方法
      * @param observer 网络变化观察者
+     * @param context 上下文
      * */
     public NetworkTrigger(@NonNull Observer observer, Context context) {
         super(observer);

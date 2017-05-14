@@ -11,7 +11,7 @@ package cn.appleye.eventtrigger.subscriber;
  * limitations under the License.
  *
  * @author feiyu
- * @date 2017/4/30
+ * date 2017/4/30
  */
 
 public class SubscriberInfo {

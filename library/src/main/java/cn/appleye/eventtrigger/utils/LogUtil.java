@@ -13,7 +13,7 @@ import android.util.Log;
  * limitations under the License.
  *
  * @author feiyu
- * @date 2017/5/2
+ * date 2017/5/2
  * 日志工具类
  */
 

@@ -11,7 +11,7 @@ package cn.appleye.eventtrigger.triggers.network;
  * limitations under the License.
  *
  * @author feiyu
- * @date 2017/5/5
+ * date 2017/5/5
  * 保存网络状态的类
  */
 

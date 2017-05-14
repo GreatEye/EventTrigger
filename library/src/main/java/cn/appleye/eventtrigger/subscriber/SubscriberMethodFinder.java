@@ -20,7 +20,7 @@ import cn.appleye.eventtrigger.triggers.Trigger;
  * limitations under the License.
  *
  * @author liuliaopu
- * @date 2017/4/30
+ * date 2017/4/30
  * 注册方法查找类
  */
 

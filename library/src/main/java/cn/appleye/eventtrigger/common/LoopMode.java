@@ -11,7 +11,7 @@ package cn.appleye.eventtrigger.common;
  * limitations under the License.
  *
  * @author feiyu
- * @date 2017/4/25
+ * date 2017/4/25
  */
 
 public enum LoopMode {

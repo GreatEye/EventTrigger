@@ -17,7 +17,7 @@ import cn.appleye.eventtrigger.triggers.network.NetworkTrigger;
  * limitations under the License.
  *
  * @author liuliaopu
- * @date 2017/5/8
+ * date 2017/5/8
  */
 
 public class DemoApplication extends Application{

@@ -11,13 +11,14 @@ package cn.appleye.eventtrigger.triggers;
  * limitations under the License.
  *
  * @author liuliaopu
- * @date 2017/4/25
+ * date 2017/4/25
  * 触发器接口
  */
 
 public interface Trigger{
     /**
      * 获取触发器名称
+     * @return 触发器名称
      * */
     String getName();
 

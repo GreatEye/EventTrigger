@@ -26,7 +26,7 @@ import cn.appleye.eventtrigger.triggers.Trigger;
  * limitations under the License.
  *
  * @author liuliaopu
- * @date 2017/4/24
+ * date 2017/4/24
  * EventTrigger是一个事件型触发器，当定义的触发器出发动作时，会自动调用在类中订阅过的对应的方法
  * 在方法中订阅方法时，根据注解{@link cn.appleye.eventtrigger.annotations.TriggerSubscribe}
  * 定义触发器对应的类，和循环类型
@@ -52,6 +52,7 @@ public class EventTriggerBus implements Observer{
 
     /**
      * 获取单例
+     * @return 返回单例
      * */
     public static EventTriggerBus getInstance(){
         if(sInstance == null) {
@@ -87,6 +88,7 @@ public class EventTriggerBus implements Observer{
 
     /**
      * 去掉全局触发器
+     * @param triggerClass 触发器类名
      * */
     public void removeGlobalTrigger(Class<?> triggerClass) {
         int size = mGlobalTriggers.size();
@@ -112,6 +114,7 @@ public class EventTriggerBus implements Observer{
 
     /**
      * 为当前实例注册触发器
+     * @param object 定义了注册方法的对象
      * */
     public void register(Object object){
         Class<?> subscriberClass = object.getClass();
@@ -164,6 +167,7 @@ public class EventTriggerBus implements Observer{
 
     /**
      * 为当前实例注销触发器
+     * @param object 定义了注册方法的对象
      * */
     public void unregister(Object object){
         synchronized (this) {

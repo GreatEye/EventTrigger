@@ -17,7 +17,7 @@ import cn.appleye.eventtrigger.triggers.AbstractTrigger;
  * limitations under the License.
  *
  * @author feiyu
- * @date 2017/5/8
+ * date 2017/5/8
  * 计时器触发器
  */
 
@@ -49,6 +49,7 @@ public class TimerTrigger extends AbstractTrigger{
 
     /**
      * 构造方法
+     * @param observer 观察者
      * @param interval 时间间隔
      * */
     public TimerTrigger(Observer observer, int interval) {

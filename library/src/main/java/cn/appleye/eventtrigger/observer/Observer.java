@@ -13,7 +13,7 @@ import cn.appleye.eventtrigger.triggers.Trigger;
  * limitations under the License.
  *
  * @author feiyu
- * @date 2017/5/2
+ * date 2017/5/2
  * 监听触发器数据观察者
  */
 

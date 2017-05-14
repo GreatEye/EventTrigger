@@ -13,7 +13,7 @@ import cn.appleye.eventtrigger.observer.Observer;
  * limitations under the License.
  *
  * @author feiyu
- * @date 2017/5/2
+ * date 2017/5/2
  * 触发器抽象类，保证每次调用触发器的{@link #dispatch(Object)}时，能够派发结果
  */
 

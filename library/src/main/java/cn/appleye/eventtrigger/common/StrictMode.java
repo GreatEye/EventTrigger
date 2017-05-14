@@ -11,7 +11,7 @@ package cn.appleye.eventtrigger.common;
  * limitations under the License.
  *
  * @author feiyu
- * @date 2017/5/7
+ * date 2017/5/7
  * 定义订阅方法对于触发器的严格模式
  */
 
