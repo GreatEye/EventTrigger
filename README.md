@@ -100,9 +100,9 @@ public void onTriggerChanged(Object result) {
 }
 ```
 注解TriggerSubscribe参数说明
-* className - 表示目标触发器类
-* loopMode - 表示调用模式， LoopMode.ALWAYS指只要触发器触发就调用，LoopMode.ONCE值调用完一次之后就不再调用
-* strictMode - 表示严格模式， StrictMode.STRICT表示className对应的触发器必须要实现Trigger接口，StrictMode.ALLOW_ALL表示可以是任意触发器，不过所有调用都得自己来实现。<br/>
+* className - 表示目标触发器类，缺省Void.class
+* loopMode - 表示调用模式， LoopMode.ALWAYS指只要触发器触发就调用，LoopMode.ONCE值调用完一次之后就不再调用，缺省LoopMode.ALWAYS
+* strictMode - 表示严格模式， StrictMode.STRICT表示className对应的触发器必须要实现Trigger接口，StrictMode.ALLOW_ALL表示可以是任意触发器，不过所有调用都得自己来实现。缺省StrictMode.STRICT<br/>
 Step 4. 初始化触发器和注册当前对象<br/>
 EventTriggerBus实现了Observer接口，将其传入到触发器构造方法当中，触发器将结果派发之后传给EventTriggerBus处理
 ```java
