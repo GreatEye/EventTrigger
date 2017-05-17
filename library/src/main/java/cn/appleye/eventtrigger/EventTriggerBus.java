@@ -1,5 +1,6 @@
 package cn.appleye.eventtrigger;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -14,6 +15,7 @@ import cn.appleye.eventtrigger.subscriber.SubscriberInfo;
 import cn.appleye.eventtrigger.subscriber.SubscriberMethod;
 import cn.appleye.eventtrigger.subscriber.SubscriberMethodFinder;
 import cn.appleye.eventtrigger.triggers.Trigger;
+import cn.appleye.eventtrigger.utils.LogUtil;
 
 /**
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -33,6 +35,8 @@ import cn.appleye.eventtrigger.triggers.Trigger;
  */
 
 public class EventTriggerBus implements Observer{
+    private static final String TAG = "EventTriggerBus";
+
     private static volatile EventTriggerBus sInstance;
 
     /**订阅方法查找器*/
@@ -141,6 +145,7 @@ public class EventTriggerBus implements Observer{
      * */
     @Override
     public void apply(Trigger trigger, Object result){
+        boolean isGlobalTrigger = checkIfGlobalTrigger(trigger);
         Class<?> triggerClass = trigger.getClass();
         Set<SubscriberInfo> subscriberInfoSet = mTotalSubscriberMethodMap.get(triggerClass);
         if(subscriberInfoSet != null) {
@@ -149,6 +154,38 @@ public class EventTriggerBus implements Observer{
             while(it.hasNext()) {
                 SubscriberInfo subscriberInfo = it.next();
                 Object object = subscriberInfo.mObject;
+
+                //如果不是全局触发器，那么我们只能允许同一个触发器和注册方法作为同一个对象的属性和方法才能调用
+                if(!isGlobalTrigger) {
+                    try{
+                        Field targetField = object.getClass().getField(trigger.getClass().getName());
+                        boolean access = targetField.isAccessible();
+                        try{
+                            if(!access) {
+                                targetField.setAccessible(true);
+                            }
+                            Object targetFiledObject = targetField.get(object);
+
+                            if(targetFiledObject != trigger) {//如果当前触发器不是当前对象中定义的那个属性
+                                LogUtil.d(TAG, "the trigger " + trigger.getName() + " object is not the field of "
+                                        + object.getClass().getSimpleName());
+                                continue;
+                            }
+                        }finally {
+                            if(!access) {
+                                targetField.setAccessible(false);//还原属性
+                            }
+                        }
+                    }catch (NoSuchFieldException nsfe){
+                        LogUtil.d(TAG, "the trigger " + trigger.getName() + " is not the field of "
+                                + object.getClass().getSimpleName());
+                        continue;//不属于当前对象，则跳过
+                    }catch (IllegalAccessException iae){
+                        iae.printStackTrace();
+                        continue;
+                    }
+
+                }
                 SubscriberMethod subscriberMethod = subscriberInfo.mSubscriberMethod;
                 //把try..catch..放在循环体内，可以避免对后续方法调用造成影响
                 try{
@@ -163,6 +200,20 @@ public class EventTriggerBus implements Observer{
                 }
             }
         }
+    }
+
+    /**
+     * 检查触发器是否是全局触发器
+     * @param trigger 目标触发器
+     * */
+    private boolean checkIfGlobalTrigger(Trigger trigger) {
+        for(Trigger globalTrigger : mGlobalTriggers) {
+            if(globalTrigger == trigger) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**
