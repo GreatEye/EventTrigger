@@ -156,35 +156,11 @@ public class EventTriggerBus implements Observer{
                 Object object = subscriberInfo.mObject;
 
                 //如果不是全局触发器，那么我们只能允许同一个触发器和注册方法作为同一个对象的属性和方法才能调用
-                if(!isGlobalTrigger) {
-                    try{
-                        Field targetField = object.getClass().getField(trigger.getClass().getName());
-                        boolean access = targetField.isAccessible();
-                        try{
-                            if(!access) {
-                                targetField.setAccessible(true);
-                            }
-                            Object targetFiledObject = targetField.get(object);
-
-                            if(targetFiledObject != trigger) {//如果当前触发器不是当前对象中定义的那个属性
-                                LogUtil.d(TAG, "the trigger " + trigger.getName() + " object is not the field of "
-                                        + object.getClass().getSimpleName());
-                                continue;
-                            }
-                        }finally {
-                            if(!access) {
-                                targetField.setAccessible(false);//还原属性
-                            }
-                        }
-                    }catch (NoSuchFieldException nsfe){
-                        LogUtil.d(TAG, "the trigger " + trigger.getName() + " is not the field of "
-                                + object.getClass().getSimpleName());
-                        continue;//不属于当前对象，则跳过
-                    }catch (IllegalAccessException iae){
-                        iae.printStackTrace();
-                        continue;
-                    }
-
+                if(!isGlobalTrigger && object != trigger.getOwner()) {
+                    //如果方法所在的对象和触发器所属的对象不是同一个
+                    LogUtil.d(TAG, "the trigger " + trigger.getName() + " object is not belongs to "
+                            + object.getClass().getSimpleName());
+                    continue;
                 }
                 SubscriberMethod subscriberMethod = subscriberInfo.mSubscriberMethod;
                 //把try..catch..放在循环体内，可以避免对后续方法调用造成影响
