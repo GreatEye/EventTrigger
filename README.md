@@ -110,6 +110,7 @@ EventTriggerBus eventTriggerBus = EventTriggerBus.getInstance();//获取实例
 eventTriggerBus.register(object);//注册当前对象
 
 CustomTrigger customTrigger = new CustomTrigger(eventTriggerBus);
+customTrigger.setOwner(owner);//为了避免不同对象所包含的触发器的影响，这里需要设置触发器所属的对象，全局触发器不需要设置
 customTrigger.setup(); //初始化操作
 ```
 不再使用的时候，需要注销当前对象和停止触发器
@@ -157,6 +158,7 @@ public class TimerTriggerActivity extends AppCompatActivity {
         mEventTriggerBus.register(this);
         //初始化触发器
         mTimerTrigger = new TimerTrigger(mEventTriggerBus, 1000);//1s间隔
+        mTimerTrigger.setOwner(this);//设置触发器所有者为当前owner
         mTimerTrigger.setup();
     }
 
