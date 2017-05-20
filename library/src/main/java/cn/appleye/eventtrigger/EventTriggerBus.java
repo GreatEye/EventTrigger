@@ -1,7 +1,5 @@
 package cn.appleye.eventtrigger;
 
-import java.lang.reflect.Field;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -46,7 +44,7 @@ public class EventTriggerBus implements Observer{
     private Map<Class, Set<SubscriberInfo>> mTotalSubscriberMethodMap = new HashMap<>();
 
     /**全局触发器列表*/
-    private List<Trigger> mGlobalTriggers = new ArrayList<>();
+    private Set<Trigger> mGlobalTriggers = new HashSet<>();
 
     private EventTriggerBus(){
         mSubscriberMethodFinder = new SubscriberMethodFinder();
@@ -92,15 +90,23 @@ public class EventTriggerBus implements Observer{
 
     /**
      * 去掉全局触发器
+     * @param trigger 触发器
+     * */
+    public void removeGlobalTrigger(Trigger trigger) {
+        mGlobalTriggers.remove(trigger);
+    }
+
+    /**
+     * 去掉所有属于该类实例的全局触发器
      * @param triggerClass 触发器类名
      * */
-    public void removeGlobalTrigger(Class<?> triggerClass) {
-        int size = mGlobalTriggers.size();
-        for(int i=size-1; i>=0; i--) {
-            Trigger trigger = mGlobalTriggers.get(i);
+    public void removeGlobalTriggerByClass(Class<?> triggerClass) {
+        Iterator<Trigger> iterator = mGlobalTriggers.iterator();
+        while(iterator.hasNext()) {
+            Trigger trigger = iterator.next();
             if(trigger.getClass() == triggerClass) {
-                trigger.stopTrigger();
-                mGlobalTriggers.remove(i);
+                trigger.stopTrigger();//先停止，再移除
+                iterator.remove();
             }
         }
     }
@@ -183,13 +189,7 @@ public class EventTriggerBus implements Observer{
      * @param trigger 目标触发器
      * */
     private boolean checkIfGlobalTrigger(Trigger trigger) {
-        for(Trigger globalTrigger : mGlobalTriggers) {
-            if(globalTrigger == trigger) {
-                return true;
-            }
-        }
-
-        return false;
+        return mGlobalTriggers.contains(trigger);
     }
 
     /**
