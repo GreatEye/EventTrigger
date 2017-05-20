@@ -28,6 +28,18 @@ public interface Trigger{
     void setup();
 
     /**
+     * 定义触发器所有者
+     * @param owner 所有者
+     * */
+    void setOwner(Object owner);
+
+    /**
+     * 获取触发器所有者
+     * @return 触发器所有者
+     * */
+    Object getOwner();
+
+    /**
      * 派发结果
      * @param result 结果,用对象封装起来
      * */

@@ -34,6 +34,7 @@ public class TimerTriggerActivity extends AppCompatActivity {
         mEventTriggerBus.register(this);
         //初始化触发器
         mTimerTrigger = new TimerTrigger(mEventTriggerBus, 1000);//1s间隔
+        mTimerTrigger.setOwner(this);//设置触发器所有者为当前owner
         mTimerTrigger.setup();
     }
 

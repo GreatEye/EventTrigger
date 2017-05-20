@@ -20,6 +20,9 @@ import cn.appleye.eventtrigger.observer.Observer;
 public abstract class AbstractTrigger implements Trigger{
     private Observer mObserver;
 
+    /**所有者*/
+    private Object mOwner;
+
     public AbstractTrigger(Observer observer){
         if(observer == null) {
             throw new IllegalArgumentException("observer can not be null");
@@ -32,5 +35,23 @@ public abstract class AbstractTrigger implements Trigger{
     public void dispatch(Object result){
         //派发结果
         mObserver.apply(this, result);
+    }
+
+    /**
+     * 设置所有者
+     * @param owner 所有者
+     * */
+    @Override
+    public void setOwner(Object owner){
+        mOwner = owner;
+    }
+
+    /**
+     * 返回所有者
+     * @return 所有者
+     * */
+    @Override
+    public Object getOwner(){
+        return mOwner;
     }
 }

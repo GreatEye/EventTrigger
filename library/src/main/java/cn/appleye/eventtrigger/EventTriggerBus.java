@@ -1,6 +1,5 @@
 package cn.appleye.eventtrigger;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -14,6 +13,7 @@ import cn.appleye.eventtrigger.subscriber.SubscriberInfo;
 import cn.appleye.eventtrigger.subscriber.SubscriberMethod;
 import cn.appleye.eventtrigger.subscriber.SubscriberMethodFinder;
 import cn.appleye.eventtrigger.triggers.Trigger;
+import cn.appleye.eventtrigger.utils.LogUtil;
 
 /**
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -33,6 +33,8 @@ import cn.appleye.eventtrigger.triggers.Trigger;
  */
 
 public class EventTriggerBus implements Observer{
+    private static final String TAG = "EventTriggerBus";
+
     private static volatile EventTriggerBus sInstance;
 
     /**订阅方法查找器*/
@@ -42,7 +44,7 @@ public class EventTriggerBus implements Observer{
     private Map<Class, Set<SubscriberInfo>> mTotalSubscriberMethodMap = new HashMap<>();
 
     /**全局触发器列表*/
-    private List<Trigger> mGlobalTriggers = new ArrayList<>();
+    private Set<Trigger> mGlobalTriggers = new HashSet<>();
 
     private EventTriggerBus(){
         mSubscriberMethodFinder = new SubscriberMethodFinder();
@@ -88,15 +90,23 @@ public class EventTriggerBus implements Observer{
 
     /**
      * 去掉全局触发器
+     * @param trigger 触发器
+     * */
+    public void removeGlobalTrigger(Trigger trigger) {
+        mGlobalTriggers.remove(trigger);
+    }
+
+    /**
+     * 去掉所有属于该类实例的全局触发器
      * @param triggerClass 触发器类名
      * */
-    public void removeGlobalTrigger(Class<?> triggerClass) {
-        int size = mGlobalTriggers.size();
-        for(int i=size-1; i>=0; i--) {
-            Trigger trigger = mGlobalTriggers.get(i);
+    public void removeGlobalTriggerByClass(Class<?> triggerClass) {
+        Iterator<Trigger> iterator = mGlobalTriggers.iterator();
+        while(iterator.hasNext()) {
+            Trigger trigger = iterator.next();
             if(trigger.getClass() == triggerClass) {
-                trigger.stopTrigger();
-                mGlobalTriggers.remove(i);
+                trigger.stopTrigger();//先停止，再移除
+                iterator.remove();
             }
         }
     }
@@ -141,6 +151,7 @@ public class EventTriggerBus implements Observer{
      * */
     @Override
     public void apply(Trigger trigger, Object result){
+        boolean isGlobalTrigger = checkIfGlobalTrigger(trigger);
         Class<?> triggerClass = trigger.getClass();
         Set<SubscriberInfo> subscriberInfoSet = mTotalSubscriberMethodMap.get(triggerClass);
         if(subscriberInfoSet != null) {
@@ -149,6 +160,14 @@ public class EventTriggerBus implements Observer{
             while(it.hasNext()) {
                 SubscriberInfo subscriberInfo = it.next();
                 Object object = subscriberInfo.mObject;
+
+                //如果不是全局触发器，那么我们只能允许同一个触发器和注册方法作为同一个对象的属性和方法才能调用
+                if(!isGlobalTrigger && object != trigger.getOwner()) {
+                    //如果方法所在的对象和触发器所属的对象不是同一个
+                    LogUtil.d(TAG, "the trigger " + trigger.getName() + " object is not belongs to "
+                            + object.getClass().getSimpleName());
+                    continue;
+                }
                 SubscriberMethod subscriberMethod = subscriberInfo.mSubscriberMethod;
                 //把try..catch..放在循环体内，可以避免对后续方法调用造成影响
                 try{
@@ -163,6 +182,14 @@ public class EventTriggerBus implements Observer{
                 }
             }
         }
+    }
+
+    /**
+     * 检查触发器是否是全局触发器
+     * @param trigger 目标触发器
+     * */
+    private boolean checkIfGlobalTrigger(Trigger trigger) {
+        return mGlobalTriggers.contains(trigger);
     }
 
     /**
