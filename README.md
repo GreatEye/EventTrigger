@@ -9,7 +9,7 @@ EventTrigger使用分为4步
 1. 添加依赖
 在build.gradle添加依赖
 ```gradle
-compile 'cn.appleye.eventtrigger:library:1.0.1'
+compile 'cn.appleye.eventtrigger:library:1.0.2'
 ```
 
 在maven中添加依赖
@@ -17,7 +17,7 @@ compile 'cn.appleye.eventtrigger:library:1.0.1'
 <dependency>
   <groupId>cn.appleye.eventtrigger</groupId>
   <artifactId>library</artifactId>
-  <version>1.0.1</version>
+  <version>1.0.2</version>
   <type>pom</type>
 </dependency>
 ```
