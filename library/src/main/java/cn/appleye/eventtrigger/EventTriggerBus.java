@@ -1,5 +1,7 @@
 package cn.appleye.eventtrigger;
 
+import android.app.Application;
+
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -50,6 +52,14 @@ public class EventTriggerBus implements Observer{
         mSubscriberMethodFinder = new SubscriberMethodFinder();
         mTotalSubscriberMethodMap.clear();
         mGlobalTriggers.clear();
+    }
+
+    /**
+     * 添加全局监听
+     * @param application 
+     * */
+    public static void install(Application application) {
+
     }
 
     /**
