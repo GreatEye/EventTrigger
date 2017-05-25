@@ -1,6 +1,8 @@
 package cn.appleye.eventtrigger;
 
+import android.app.Activity;
 import android.app.Application;
+import android.os.Bundle;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -48,6 +50,8 @@ public class EventTriggerBus implements Observer{
     /**全局触发器列表*/
     private Set<Trigger> mGlobalTriggers = new HashSet<>();
 
+    private static Application.ActivityLifecycleCallbacks sLifecycleCallback;
+
     private EventTriggerBus(){
         mSubscriberMethodFinder = new SubscriberMethodFinder();
         mTotalSubscriberMethodMap.clear();
@@ -56,10 +60,53 @@ public class EventTriggerBus implements Observer{
 
     /**
      * 添加全局监听
-     * @param application 
+     * @param application
      * */
     public static void install(Application application) {
+        if(application == null) {
+            throw new IllegalArgumentException("application can not be null");
+        }
 
+        if(sLifecycleCallback == null){
+            sLifecycleCallback = new Application.ActivityLifecycleCallbacks(){
+
+                @Override
+                public void onActivityCreated(Activity activity, Bundle savedInstanceState) {
+                    
+                }
+
+                @Override
+                public void onActivityStarted(Activity activity) {
+
+                }
+
+                @Override
+                public void onActivityResumed(Activity activity) {
+
+                }
+
+                @Override
+                public void onActivityPaused(Activity activity) {
+
+                }
+
+                @Override
+                public void onActivityStopped(Activity activity) {
+
+                }
+
+                @Override
+                public void onActivitySaveInstanceState(Activity activity, Bundle outState) {
+
+                }
+
+                @Override
+                public void onActivityDestroyed(Activity activity) {
+
+                }
+            };
+        }
+        application.registerActivityLifecycleCallbacks(sLifecycleCallback);
     }
 
     /**
