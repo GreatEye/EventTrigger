@@ -72,7 +72,7 @@ public class EventTriggerBus implements Observer{
 
                 @Override
                 public void onActivityCreated(Activity activity, Bundle savedInstanceState) {
-                    
+
                 }
 
                 @Override
