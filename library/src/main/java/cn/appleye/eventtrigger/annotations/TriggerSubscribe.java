@@ -6,6 +6,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+import cn.appleye.eventtrigger.common.ClassType;
 import cn.appleye.eventtrigger.common.LoopMode;
 import cn.appleye.eventtrigger.common.StrictMode;
 
