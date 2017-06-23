@@ -241,6 +241,7 @@ public class EventTriggerBus implements Observer{
             mLocalTriggers.put(activity, triggerSet);
         }
 
+        trigger.setOwner(activity);
         triggerSet.add(trigger);
 
         return this;
@@ -303,7 +304,6 @@ public class EventTriggerBus implements Observer{
                 if(triggerCls == trigger.getClass()){
                     trigger.setup();
                 }
-
             }
         }
 

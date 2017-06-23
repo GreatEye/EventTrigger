@@ -52,7 +52,7 @@ public class TimerTrigger extends AbstractTrigger{
      * @param observer 观察者
      * @param interval 时间间隔
      * */
-    public TimerTrigger(Observer observer, int interval) {
+    public TimerTrigger(Observer observer, Integer interval) {
         super(observer);
 
         mInterval = interval<0?100:interval;//小于0时，定义为100ms

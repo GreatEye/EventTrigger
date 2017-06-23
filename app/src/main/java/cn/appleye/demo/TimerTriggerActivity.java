@@ -8,6 +8,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import cn.appleye.eventtrigger.EventTriggerBus;
 import cn.appleye.eventtrigger.annotations.TriggerSubscribe;
+import cn.appleye.eventtrigger.observer.Observer;
 import cn.appleye.eventtrigger.triggers.Trigger;
 import cn.appleye.eventtrigger.triggers.timer.TimerTrigger;
 
@@ -32,10 +33,16 @@ public class TimerTriggerActivity extends AppCompatActivity {
         //获取EventTriggerBus并且注册当前类
         mEventTriggerBus = EventTriggerBus.getInstance();
         mEventTriggerBus.register(this);
+
+        mEventTriggerBus.installLocalTrigger(this, TimerTrigger.class,
+                new Class[]{Observer.class, Integer.class},
+                new Object[]{mEventTriggerBus, 1000})
+        .forceCallLocalTrigger(this, TimerTrigger.class);
+
         //初始化触发器
-        mTimerTrigger = new TimerTrigger(mEventTriggerBus, 1000);//1s间隔
-        mTimerTrigger.setOwner(this);//设置触发器所有者为当前owner
-        mTimerTrigger.setup();
+//        mTimerTrigger = new TimerTrigger(mEventTriggerBus, 1000);//1s间隔
+//        mTimerTrigger.setOwner(this);//设置触发器所有者为当前owner
+//        mTimerTrigger.setup();
     }
 
     /**
