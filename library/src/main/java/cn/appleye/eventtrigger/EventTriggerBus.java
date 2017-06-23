@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.Application;
 import android.os.Bundle;
 
+import java.lang.reflect.Constructor;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -34,6 +35,9 @@ import cn.appleye.eventtrigger.utils.LogUtil;
  * EventTrigger是一个事件型触发器，当定义的触发器出发动作时，会自动调用在类中订阅过的对应的方法
  * 在方法中订阅方法时，根据注解{@link cn.appleye.eventtrigger.annotations.TriggerSubscribe}
  * 定义触发器对应的类，和循环类型
+ * 使用方式
+ * 1.可以直接加载全局触发器
+ * 2.可以加载指定Activity里面的触发器
  */
 
 public class EventTriggerBus implements Observer{
@@ -50,6 +54,9 @@ public class EventTriggerBus implements Observer{
     /**全局触发器列表*/
     private Set<Trigger> mGlobalTriggers = new HashSet<>();
 
+    /**本地触发器*/
+    private Map<Activity, Set<Trigger>> mLocalTriggers = new HashMap<>();
+
     private static Application.ActivityLifecycleCallbacks sLifecycleCallback;
 
     private EventTriggerBus(){
@@ -59,10 +66,10 @@ public class EventTriggerBus implements Observer{
     }
 
     /**
-     * 添加全局监听
+     * 添加全局监听之前初始化操作
      * @param application
      * */
-    public static void install(Application application) {
+    public static void init(Application application) {
         if(application == null) {
             throw new IllegalArgumentException("application can not be null");
         }
@@ -102,7 +109,8 @@ public class EventTriggerBus implements Observer{
 
                 @Override
                 public void onActivityDestroyed(Activity activity) {
-
+                    //activity销毁的时候，移除本地触发器
+                    EventTriggerBus.getInstance().uninstallAllLocalTriggers(activity);
                 }
             };
         }
@@ -128,36 +136,72 @@ public class EventTriggerBus implements Observer{
     /**
      * 添加全局Trigger，需要实现{@link Trigger}接口, 注意内存泄露问题
      * @param trigger 触发器
+     * @return 返回单例
      * */
-    public void addGlobalTrigger(Trigger trigger) {
+    public EventTriggerBus installGlobalTrigger(Trigger trigger) {
+        if(trigger == null){
+            throw new IllegalArgumentException("trigger is null");
+        }
         mGlobalTriggers.add(trigger);
+        return this;
+    }
+
+    /**
+     * 添加全局Trigger，需要实现{@link Trigger}接口, 注意内存泄露问题
+     * @param triggerClass 触发器类
+     * @param argsClass 构造参数类
+     * @return 返回单例
+     * */
+    public EventTriggerBus installGlobalTrigger(Class triggerClass, Class<?>[] argsClass, Object[] args) {
+        try {
+            Class clz = Class.forName(triggerClass.getName());
+            Constructor constructor = clz.getConstructor(argsClass);
+            Trigger trigger = (Trigger) constructor.newInstance(args);
+            installGlobalTrigger(trigger);
+            return this;
+        }catch (ClassNotFoundException cnfe) {
+            cnfe.printStackTrace();
+            throw new IllegalArgumentException("class : " + triggerClass.getName() + " is not found");
+        }catch (NoSuchMethodException nsme) {
+            nsme.printStackTrace();
+            throw new IllegalArgumentException("class : " + triggerClass.getName() + " has no constructor like this");
+        }catch (Exception e){
+            e.printStackTrace();
+            throw new IllegalArgumentException("OMD! Something unexpected errors happened");
+        }
     }
 
     /**
      * 强制触发触发器
      * @param triggerClass 触发器对应的类
+     * @return 返回单例
      * */
-    public void forceCallGlobalTrigger(Class<?> triggerClass) {
+    public EventTriggerBus forceCallGlobalTrigger(Class<?> triggerClass) {
         for(Trigger trigger : mGlobalTriggers) {
             if(trigger.getClass() == triggerClass){
                 trigger.forceTrigger();
             }
         }
+
+        return this;
     }
 
     /**
-     * 去掉全局触发器
+     * 移除全局触发器
      * @param trigger 触发器
+     * @return 返回单例
      * */
-    public void removeGlobalTrigger(Trigger trigger) {
+    public EventTriggerBus uninstallGlobalTrigger(Trigger trigger) {
         mGlobalTriggers.remove(trigger);
+        return this;
     }
 
     /**
-     * 去掉所有属于该类实例的全局触发器
+     * 移除所有属于该类实例的全局触发器
      * @param triggerClass 触发器类名
+     * @return 返回单例
      * */
-    public void removeGlobalTriggerByClass(Class<?> triggerClass) {
+    public EventTriggerBus uninstallGlobalTrigger(Class<?> triggerClass) {
         Iterator<Trigger> iterator = mGlobalTriggers.iterator();
         while(iterator.hasNext()) {
             Trigger trigger = iterator.next();
@@ -166,24 +210,197 @@ public class EventTriggerBus implements Observer{
                 iterator.remove();
             }
         }
+
+        return this;
     }
 
     /**
-     * 去掉所有的全局触发器
+     * 移除所有的全局触发器
+     * @return 返回单例
      * */
-    public void removeAllGlobalTriggers() {
+    public EventTriggerBus uninstallAllGlobalTriggers() {
         for(Trigger trigger : mGlobalTriggers) {
             trigger.forceTrigger();
         }
 
         mGlobalTriggers.clear();
+
+        return this;
+    }
+
+    /**
+     * 添加本地触发器
+     * @param activity 目标activity
+     * @param trigger 触发器
+     * @return 返回单例
+     * */
+    public EventTriggerBus installLocalTrigger(Activity activity, Trigger trigger) {
+        Set<Trigger> triggerSet = mLocalTriggers.get(activity);
+        if(triggerSet == null){
+            triggerSet = new HashSet<>();
+            mLocalTriggers.put(activity, triggerSet);
+        }
+
+        triggerSet.add(trigger);
+
+        return this;
+    }
+
+    /**
+     * 添加本地触发器
+     * @param activity 目标activity
+     * @param triggerCls 触发器类
+     * @param  argsClass 参数类型
+     * @param args 参数值
+     * @return 返回单例
+     * */
+    public EventTriggerBus installLocalTrigger(Activity activity, Class<?> triggerCls, Class<?>[] argsClass, Object[] args) {
+        try {
+            Class clz = Class.forName(triggerCls.getName());
+            Constructor constructor = clz.getConstructor(argsClass);
+            Trigger trigger = (Trigger) constructor.newInstance(args);
+            installLocalTrigger(activity, trigger);
+            return this;
+        }catch (ClassNotFoundException cnfe) {
+            cnfe.printStackTrace();
+            throw new IllegalArgumentException("class : " + triggerCls.getName() + " is not found");
+        }catch (NoSuchMethodException nsme) {
+            nsme.printStackTrace();
+            throw new IllegalArgumentException("class : " + triggerCls.getName() + " has no constructor like this");
+        }catch (Exception e){
+            e.printStackTrace();
+            throw new IllegalArgumentException("OMD! Something unexpected errors happened");
+        }
+    }
+
+    /**
+     * 调用本地触发器
+     * @param activity 目标activity
+     * @param trigger 触发器
+     * @return 返回单例
+     * */
+    public EventTriggerBus forceCallLocalTrigger(Activity activity, Trigger trigger){
+        Set<Trigger> triggerSet = mLocalTriggers.get(activity);
+        if(triggerSet != null && triggerSet.contains(trigger)){
+            trigger.forceTrigger();
+        }
+
+        return this;
+    }
+
+    /**
+     * 调用本地触发器
+     * @param activity 目标activity
+     * @param triggerCls 触发器类
+     * @return 返回单例
+     * */
+    public EventTriggerBus forceCallLocalTrigger(Activity activity, Class<?> triggerCls){
+        Set<Trigger> triggerSet = mLocalTriggers.get(activity);
+        if(triggerSet != null ){
+            Iterator<Trigger> it = triggerSet.iterator();
+            while(it.hasNext()){
+                Trigger trigger = it.next();
+                if(triggerCls == trigger.getClass()){
+                    trigger.setup();
+                }
+
+            }
+        }
+
+        return this;
+    }
+
+    /**
+     * 调用所有本地触发器
+     * @param activity 目标activity
+     * @return 返回单例
+     * */
+    public EventTriggerBus forceCallLocalTrigger(Activity activity){
+        Set<Trigger> triggerSet = mLocalTriggers.get(activity);
+        if(triggerSet != null ){
+            Iterator<Trigger> it = triggerSet.iterator();
+            while(it.hasNext()){
+                it.next().setup();
+            }
+        }
+
+        return this;
+    }
+
+    /**
+     * 移除本地触发器
+     * @param activity 目标activity
+     * @param trigger 触发器
+     * @return 返回单例
+     * */
+    public EventTriggerBus uninstallLocalTrigger(Activity activity, Trigger trigger){
+        Set<Trigger> triggerSet = mLocalTriggers.get(activity);
+        if(triggerSet != null){
+            trigger.stopTrigger();
+            triggerSet.remove(trigger);
+
+            if(triggerSet.size() == 0){
+                mLocalTriggers.remove(activity);
+            }
+        }
+
+        return this;
+    }
+
+    /**
+     * 移除本地触发器
+     * @param activity 目标activity
+     * @param triggerCls 触发器类
+     * @return 返回单例
+     * */
+    public EventTriggerBus uninstallLocalTrigger(Activity activity, Class<?> triggerCls){
+        Set<Trigger> triggerSet = mLocalTriggers.get(activity);
+        if(triggerSet != null){
+            Iterator<Trigger> it = triggerSet.iterator();
+            while(it.hasNext()){
+                Trigger trigger = it.next();
+                if(triggerCls == trigger.getClass()){
+                    trigger.stopTrigger();
+                    triggerSet.remove(trigger);
+                }
+
+            }
+
+            if(triggerSet.size() == 0){
+                mLocalTriggers.remove(activity);
+            }
+        }
+
+        return this;
+    }
+
+    /**
+     * 移除所有本地触发器
+     * @param activity 目标activity
+     * @return 返回单例
+     * */
+    public EventTriggerBus uninstallAllLocalTriggers(Activity activity){
+        Set<Trigger> triggerSet = mLocalTriggers.get(activity);
+        if(triggerSet != null){
+            Iterator<Trigger> it = triggerSet.iterator();
+            while(it.hasNext()){
+                Trigger trigger = it.next();
+                trigger.stopTrigger();
+                triggerSet.remove(trigger);
+            }
+
+            mLocalTriggers.remove(activity);
+        }
+
+        return this;
     }
 
     /**
      * 为当前实例注册触发器
      * @param object 定义了注册方法的对象
+     * @return 返回单例
      * */
-    public void register(Object object){
+    public EventTriggerBus register(Object object){
         Class<?> subscriberClass = object.getClass();
         List<SubscriberMethod> subscriberMethodList = mSubscriberMethodFinder.findSubscriberMethod(subscriberClass);
         synchronized (this){
@@ -199,6 +416,8 @@ public class EventTriggerBus implements Observer{
                 subscriberMethodSet.add(subscriberInfo);
             }
         }
+
+        return this;
     }
 
     /**
@@ -252,8 +471,9 @@ public class EventTriggerBus implements Observer{
     /**
      * 为当前实例注销触发器
      * @param object 定义了注册方法的对象
+     * @return 返回单例
      * */
-    public void unregister(Object object){
+    public EventTriggerBus unregister(Object object){
         synchronized (this) {
             //遍历所有的方法，注销掉当前对象包含的方法
             Iterator<Set<SubscriberInfo>> setIterator = mTotalSubscriberMethodMap.values().iterator();
@@ -268,5 +488,7 @@ public class EventTriggerBus implements Observer{
                 }
             }
         }
+
+        return this;
     }
 }

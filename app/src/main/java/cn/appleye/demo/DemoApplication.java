@@ -39,13 +39,13 @@ public class DemoApplication extends Application{
         /**添加网络状态变化的触发器*/
         Trigger networkTrigger = new NetworkTrigger(eventTriggerBus, this);
         networkTrigger.setup();
-        eventTriggerBus.addGlobalTrigger(networkTrigger);
+        eventTriggerBus.installGlobalTrigger(networkTrigger);
     }
 
     @Override
     public void onTerminate(){
         super.onTerminate();
         //移除所有触发器
-        EventTriggerBus.getInstance().removeAllGlobalTriggers();
+        EventTriggerBus.getInstance().uninstallAllGlobalTriggers();
     }
 }
