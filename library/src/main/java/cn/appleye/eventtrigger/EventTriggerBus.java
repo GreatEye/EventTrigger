@@ -57,7 +57,7 @@ public class EventTriggerBus implements Observer{
     /**本地触发器*/
     private Map<Activity, Set<Trigger>> mLocalTriggers = new HashMap<>();
 
-    private static Application.ActivityLifecycleCallbacks sLifecycleCallback;
+    private Application.ActivityLifecycleCallbacks mLifecycleCallback;
 
     private EventTriggerBus(){
         mSubscriberMethodFinder = new SubscriberMethodFinder();
@@ -69,13 +69,13 @@ public class EventTriggerBus implements Observer{
      * 添加全局监听之前初始化操作
      * @param application
      * */
-    public static void init(Application application) {
+    public void init(Application application) {
         if(application == null) {
             throw new IllegalArgumentException("application can not be null");
         }
 
-        if(sLifecycleCallback == null){
-            sLifecycleCallback = new Application.ActivityLifecycleCallbacks(){
+        if(mLifecycleCallback == null){
+            mLifecycleCallback = new Application.ActivityLifecycleCallbacks(){
 
                 @Override
                 public void onActivityCreated(Activity activity, Bundle savedInstanceState) {
@@ -110,11 +110,11 @@ public class EventTriggerBus implements Observer{
                 @Override
                 public void onActivityDestroyed(Activity activity) {
                     //activity销毁的时候，移除本地触发器
-                    EventTriggerBus.getInstance().uninstallAllLocalTriggers(activity);
+                    uninstallAllLocalTriggers(activity);
                 }
             };
         }
-        application.registerActivityLifecycleCallbacks(sLifecycleCallback);
+        application.registerActivityLifecycleCallbacks(mLifecycleCallback);
     }
 
     /**
