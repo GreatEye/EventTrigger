@@ -8,8 +8,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import cn.appleye.eventtrigger.EventTriggerBus;
 import cn.appleye.eventtrigger.annotations.TriggerSubscribe;
-import cn.appleye.eventtrigger.observer.Observer;
-import cn.appleye.eventtrigger.triggers.Trigger;
 import cn.appleye.eventtrigger.triggers.timer.TimerTrigger;
 
 public class TimerTriggerActivity extends AppCompatActivity {
@@ -20,8 +18,6 @@ public class TimerTriggerActivity extends AppCompatActivity {
     private AtomicInteger mValue = new AtomicInteger(0);
 
     private EventTriggerBus mEventTriggerBus;
-    /**计时器触发器*/
-    private Trigger mTimerTrigger;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,10 +30,9 @@ public class TimerTriggerActivity extends AppCompatActivity {
         mEventTriggerBus = EventTriggerBus.getInstance();
         mEventTriggerBus.register(this);
 
-        mEventTriggerBus.installLocalTrigger(this, TimerTrigger.class,
-                new Class[]{Observer.class, Integer.class},
-                new Object[]{mEventTriggerBus, 1000})
-        .forceCallLocalTrigger(this, TimerTrigger.class);
+        mEventTriggerBus.installLocalTrigger(this,
+                TimerTrigger.class, new Object[]{mEventTriggerBus, 1000})
+                        .forceCallLocalTrigger(this, TimerTrigger.class);
 
         //初始化触发器
 //        mTimerTrigger = new TimerTrigger(mEventTriggerBus, 1000);//1s间隔
@@ -57,8 +52,6 @@ public class TimerTriggerActivity extends AppCompatActivity {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        //停止触发器，并且注销当前类
-        mTimerTrigger.stopTrigger();
         mEventTriggerBus.unregister(this);
     }
 }

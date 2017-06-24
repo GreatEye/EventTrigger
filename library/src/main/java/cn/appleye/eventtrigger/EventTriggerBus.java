@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.app.Application;
 import android.os.Bundle;
 
-import java.lang.reflect.Constructor;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -19,6 +18,7 @@ import cn.appleye.eventtrigger.subscriber.SubscriberMethod;
 import cn.appleye.eventtrigger.subscriber.SubscriberMethodFinder;
 import cn.appleye.eventtrigger.triggers.Trigger;
 import cn.appleye.eventtrigger.utils.LogUtil;
+import cn.appleye.eventtrigger.utils.ReflectUtil;
 
 /**
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -142,6 +142,7 @@ public class EventTriggerBus implements Observer{
         if(trigger == null){
             throw new IllegalArgumentException("trigger is null");
         }
+        trigger.setup();//全局触发器先进行初始化
         mGlobalTriggers.add(trigger);
         return this;
     }
@@ -149,26 +150,14 @@ public class EventTriggerBus implements Observer{
     /**
      * 添加全局Trigger，需要实现{@link Trigger}接口, 注意内存泄露问题
      * @param triggerClass 触发器类
-     * @param argsClass 构造参数类
+     * @param args 参数
      * @return 返回单例
      * */
-    public EventTriggerBus installGlobalTrigger(Class triggerClass, Class<?>[] argsClass, Object[] args) {
-        try {
-            Class clz = Class.forName(triggerClass.getName());
-            Constructor constructor = clz.getConstructor(argsClass);
-            Trigger trigger = (Trigger) constructor.newInstance(args);
-            installGlobalTrigger(trigger);
-            return this;
-        }catch (ClassNotFoundException cnfe) {
-            cnfe.printStackTrace();
-            throw new IllegalArgumentException("class : " + triggerClass.getName() + " is not found");
-        }catch (NoSuchMethodException nsme) {
-            nsme.printStackTrace();
-            throw new IllegalArgumentException("class : " + triggerClass.getName() + " has no constructor like this");
-        }catch (Exception e){
-            e.printStackTrace();
-            throw new IllegalArgumentException("OMD! Something unexpected errors happened");
-        }
+    public EventTriggerBus installGlobalTrigger(Class triggerClass, Object[] args) {
+        Trigger trigger = (Trigger) ReflectUtil.newInstance(triggerClass, args);
+        installGlobalTrigger(trigger);
+
+        return this;
     }
 
     /**
@@ -192,6 +181,7 @@ public class EventTriggerBus implements Observer{
      * @return 返回单例
      * */
     public EventTriggerBus uninstallGlobalTrigger(Trigger trigger) {
+        trigger.stopTrigger();
         mGlobalTriggers.remove(trigger);
         return this;
     }
@@ -251,27 +241,26 @@ public class EventTriggerBus implements Observer{
      * 添加本地触发器
      * @param activity 目标activity
      * @param triggerCls 触发器类
-     * @param  argsClass 参数类型
      * @param args 参数值
      * @return 返回单例
      * */
-    public EventTriggerBus installLocalTrigger(Activity activity, Class<?> triggerCls, Class<?>[] argsClass, Object[] args) {
-        try {
-            Class clz = Class.forName(triggerCls.getName());
-            Constructor constructor = clz.getConstructor(argsClass);
-            Trigger trigger = (Trigger) constructor.newInstance(args);
+    public EventTriggerBus installLocalTrigger(Activity activity, Class<?> triggerCls, Object[] args) {
+        Trigger trigger = (Trigger)ReflectUtil.newInstance(triggerCls, args);
+        if(trigger != null){
             installLocalTrigger(activity, trigger);
-            return this;
-        }catch (ClassNotFoundException cnfe) {
-            cnfe.printStackTrace();
-            throw new IllegalArgumentException("class : " + triggerCls.getName() + " is not found");
-        }catch (NoSuchMethodException nsme) {
-            nsme.printStackTrace();
-            throw new IllegalArgumentException("class : " + triggerCls.getName() + " has no constructor like this");
-        }catch (Exception e){
-            e.printStackTrace();
-            throw new IllegalArgumentException("OMD! Something unexpected errors happened");
         }
+
+        return this;
+    }
+
+    /**
+     * 添加本地无参构造方法触发器
+     * @param activity 目标activity
+     * @param triggerCls 触发器类
+     * @return 返回单例
+     * */
+    public EventTriggerBus installLocalTrigger(Activity activity, Class<?> triggerCls) {
+        return installLocalTrigger(activity, triggerCls);
     }
 
     /**

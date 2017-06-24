@@ -1,10 +1,8 @@
 package cn.appleye.demo;
 
 import android.app.Application;
-import android.content.Context;
 
 import cn.appleye.eventtrigger.EventTriggerBus;
-import cn.appleye.eventtrigger.observer.Observer;
 import cn.appleye.eventtrigger.triggers.network.NetworkTrigger;
 
 /**
@@ -39,14 +37,7 @@ public class DemoApplication extends Application{
         eventTriggerBus.init(this);
 
         eventTriggerBus.installGlobalTrigger(NetworkTrigger.class,
-                new Class[]{Observer.class, Context.class},
-                new Object[]{ eventTriggerBus, this})
-                .forceCallGlobalTrigger(NetworkTrigger.class);
-
-        /**添加网络状态变化的触发器*//*
-        Trigger networkTrigger = new NetworkTrigger(eventTriggerBus, this);
-        networkTrigger.setup();
-        eventTriggerBus.installGlobalTrigger(networkTrigger);*/
+                new Object[]{ eventTriggerBus, this});
     }
 
     @Override
