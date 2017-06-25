@@ -110,11 +110,11 @@ EventTriggerBus实现了Observer接口，将其传入到触发器构造方法当
 //获取EventTriggerBus并且注册当前类
 EventTriggerBus.getInstance().register(this)//注册当前对象
         .installLocalTrigger(this, CustomTrigger.class, Object[])//添加本地触发器(绑定的Activity、触发器类、触发器构造方法参数)
-        .forceCallLocalTrigger(this, TimerTrigger.class);//强制调用触发器
+        .forceCallLocalTrigger(this, CustomTrigger.class);//强制调用触发器
 ```
 不再使用的时候，需要注销当前对象
 ```java
-EventTriggerBus.getInstance().unregister(object)
+EventTriggerBus.getInstance().unregister(this)
 ```
 另外，经常会用到全局触发器，可以在Application初始化的时候，将实例化触发器即可，下面demo有使用详解
 ## Demo
@@ -212,7 +212,6 @@ Step 2 : 注册当前对象
 ```java
 public class NetworkTriggerActivity extends AppCompatActivity {
     private TextView mNetworkView;
-    private EventTriggerBus mEventTriggerBus;
 
     private static final int NETWORK_PERMISSION_REQUEST = 1000;
 
@@ -224,10 +223,8 @@ public class NetworkTriggerActivity extends AppCompatActivity {
         mNetworkView = (TextView) findViewById(R.id.network_info_view);
 
         //注册当前类
-        mEventTriggerBus = EventTriggerBus.getInstance();
-        mEventTriggerBus.register(this);
-
-        forceNetworkTrigger();//立刻生效
+        EventTriggerBus.getInstance().register(this)
+        					.forceCallGlobalTrigger(NetworkTrigger.class);
     }
 
     @TriggerSubscribe(className = NetworkTrigger.class, loopMode = LoopMode.ALWAYS,
@@ -236,18 +233,10 @@ public class NetworkTriggerActivity extends AppCompatActivity {
         mNetworkView.setText(networkState.toString());
     }
 
-    /**
-     * 强制调用网络状态变化触发器
-     * */
-    private void forceNetworkTrigger(){
-        //强制执行当前触发器
-        mEventTriggerBus.forceCallGlobalTrigger(NetworkTrigger.class);
-    }
-
     @Override
     public void onDestroy() {
         super.onDestroy();
-        mEventTriggerBus.unregister(this);
+        EventTriggerBus.getInstance().unregister(this);
     }
 }
 ```
