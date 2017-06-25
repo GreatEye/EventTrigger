@@ -66,7 +66,7 @@ public class EventTriggerBus implements Observer{
      * 添加全局监听之前初始化操作
      * @param application
      * */
-    public void init(Application application) {
+    public EventTriggerBus init(Application application) {
         if(application == null) {
             throw new IllegalArgumentException("application can not be null");
         }
@@ -113,6 +113,8 @@ public class EventTriggerBus implements Observer{
 
             application.registerActivityLifecycleCallbacks(mLifecycleCallback);
         }
+
+        return this;
     }
 
     /**

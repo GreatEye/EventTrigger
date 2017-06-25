@@ -33,11 +33,9 @@ public class DemoApplication extends Application{
      * 初始化全局触发器
      * */
     private void setupGlobalTrigger() {
-        EventTriggerBus eventTriggerBus = EventTriggerBus.getInstance();
-        eventTriggerBus.init(this);
-
-        eventTriggerBus.installGlobalTrigger(NetworkTrigger.class,
-                new Object[]{ eventTriggerBus, this});
+        EventTriggerBus.getInstance().init(this)
+                .installGlobalTrigger(NetworkTrigger.class,
+                new Object[]{ EventTriggerBus.getInstance(), this});
     }
 
     @Override

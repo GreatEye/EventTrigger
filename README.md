@@ -107,13 +107,14 @@ public void onTriggerChanged(Object result) {
 Step 4. 初始化触发器和注册当前对象<br/>
 EventTriggerBus实现了Observer接口，将其传入到触发器构造方法当中，触发器将结果派发之后传给EventTriggerBus处理
 ```java
-EventTriggerBus eventTriggerBus = EventTriggerBus.getInstance();//获取实例
-eventTriggerBus.register(object);//注册当前对象
-eventTriggerBus.installLocalTrigger(Activity, CustomTrigger.class, Object[]);//添加本地触发器(绑定的Activity、触发器类、触发器构造方法参数)
+//获取EventTriggerBus并且注册当前类
+EventTriggerBus.getInstance().register(this)//注册当前对象
+        .installLocalTrigger(this, CustomTrigger.class, Object[])//添加本地触发器(绑定的Activity、触发器类、触发器构造方法参数)
+        .forceCallLocalTrigger(this, TimerTrigger.class);//强制调用触发器
 ```
 不再使用的时候，需要注销当前对象
 ```java
-eventTriggerBus.unregister(object)
+EventTriggerBus.getInstance().unregister(object)
 ```
 另外，经常会用到全局触发器，可以在Application初始化的时候，将实例化触发器即可，下面demo有使用详解
 ## Demo
@@ -151,12 +152,10 @@ public class TimerTriggerActivity extends AppCompatActivity {
         mTimerInfoView = (TextView) findViewById(R.id.timer_info_view);
 
         //获取EventTriggerBus并且注册当前类
-        mEventTriggerBus = EventTriggerBus.getInstance();
-        mEventTriggerBus.register(this);
-        //加载本地触发器
-        mEventTriggerBus.installLocalTrigger(this,
-                TimerTrigger.class, new Object[]{mEventTriggerBus, 1000})
-                        .forceCallLocalTrigger(this, TimerTrigger.class);
+        EventTriggerBus.getInstance().register(this)
+                .installLocalTrigger(this, TimerTrigger.class,
+                        new Object[]{ EventTriggerBus.getInstance(), 1000})
+                .forceCallLocalTrigger(this, TimerTrigger.class);
     }
 
     /**
@@ -171,9 +170,8 @@ public class TimerTriggerActivity extends AppCompatActivity {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        //停止触发器，并且注销当前类
-        mTimerTrigger.stopTrigger();
-        mEventTriggerBus.unregister(this);
+        //注销当前监听
+        EventTriggerBus.getInstance().unregister(this);
     }
 }
 ```
@@ -196,11 +194,9 @@ public class DemoApplication extends Application{
      * 初始化全局触发器
      * */
     private void setupGlobalTrigger() {
-        EventTriggerBus eventTriggerBus = EventTriggerBus.getInstance();
-        eventTriggerBus.init(this);
-
-        eventTriggerBus.installGlobalTrigger(NetworkTrigger.class,
-                new Object[]{ eventTriggerBus, this});
+        EventTriggerBus.getInstance().init(this)
+                .installGlobalTrigger(NetworkTrigger.class,
+                new Object[]{ EventTriggerBus.getInstance(), this});
     }
 
     @Override

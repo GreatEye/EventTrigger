@@ -17,8 +17,6 @@ public class TimerTriggerActivity extends AppCompatActivity {
     /**计数器*/
     private AtomicInteger mValue = new AtomicInteger(0);
 
-    private EventTriggerBus mEventTriggerBus;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -27,12 +25,10 @@ public class TimerTriggerActivity extends AppCompatActivity {
         mTimerInfoView = (TextView) findViewById(R.id.timer_info_view);
 
         //获取EventTriggerBus并且注册当前类
-        mEventTriggerBus = EventTriggerBus.getInstance();
-        mEventTriggerBus.register(this);
-        //加载本地触发器
-        mEventTriggerBus.installLocalTrigger(this,
-                TimerTrigger.class, new Object[]{mEventTriggerBus, 1000})
-                        .forceCallLocalTrigger(this, TimerTrigger.class);
+        EventTriggerBus.getInstance().register(this)
+                .installLocalTrigger(this, TimerTrigger.class,
+                        new Object[]{ EventTriggerBus.getInstance(), 1000})
+                .forceCallLocalTrigger(this, TimerTrigger.class);
     }
 
     /**
@@ -47,6 +43,7 @@ public class TimerTriggerActivity extends AppCompatActivity {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        mEventTriggerBus.unregister(this);
+        //注销当前监听
+        EventTriggerBus.getInstance().unregister(this);
     }
 }
