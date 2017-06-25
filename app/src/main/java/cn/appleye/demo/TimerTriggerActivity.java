@@ -33,11 +33,6 @@ public class TimerTriggerActivity extends AppCompatActivity {
         mEventTriggerBus.installLocalTrigger(this,
                 TimerTrigger.class, new Object[]{mEventTriggerBus, 1000})
                         .forceCallLocalTrigger(this, TimerTrigger.class);
-
-        //初始化触发器
-//        mTimerTrigger = new TimerTrigger(mEventTriggerBus, 1000);//1s间隔
-//        mTimerTrigger.setOwner(this);//设置触发器所有者为当前owner
-//        mTimerTrigger.setup();
     }
 
     /**

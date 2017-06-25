@@ -35,9 +35,6 @@ import cn.appleye.eventtrigger.utils.ReflectUtil;
  * EventTrigger是一个事件型触发器，当定义的触发器出发动作时，会自动调用在类中订阅过的对应的方法
  * 在方法中订阅方法时，根据注解{@link cn.appleye.eventtrigger.annotations.TriggerSubscribe}
  * 定义触发器对应的类，和循环类型
- * 使用方式
- * 1.可以直接加载全局触发器
- * 2.可以加载指定Activity里面的触发器
  */
 
 public class EventTriggerBus implements Observer{
