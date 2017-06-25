@@ -29,7 +29,7 @@ public class TimerTriggerActivity extends AppCompatActivity {
         //获取EventTriggerBus并且注册当前类
         mEventTriggerBus = EventTriggerBus.getInstance();
         mEventTriggerBus.register(this);
-
+        //加载本地触发器
         mEventTriggerBus.installLocalTrigger(this,
                 TimerTrigger.class, new Object[]{mEventTriggerBus, 1000})
                         .forceCallLocalTrigger(this, TimerTrigger.class);

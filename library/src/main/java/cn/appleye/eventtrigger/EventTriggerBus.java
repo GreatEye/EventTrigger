@@ -110,8 +110,9 @@ public class EventTriggerBus implements Observer{
                     uninstallAllLocalTriggers(activity);
                 }
             };
+
+            application.registerActivityLifecycleCallbacks(mLifecycleCallback);
         }
-        application.registerActivityLifecycleCallbacks(mLifecycleCallback);
     }
 
     /**

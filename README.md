@@ -109,14 +109,10 @@ EventTriggerBus实现了Observer接口，将其传入到触发器构造方法当
 ```java
 EventTriggerBus eventTriggerBus = EventTriggerBus.getInstance();//获取实例
 eventTriggerBus.register(object);//注册当前对象
-
-CustomTrigger customTrigger = new CustomTrigger(eventTriggerBus);
-customTrigger.setOwner(owner);//为了避免不同对象所包含的触发器的影响，这里需要设置触发器所属的对象，全局触发器不需要设置
-customTrigger.setup(); //初始化操作
+eventTriggerBus.installLocalTrigger(Activity, CustomTrigger.class, Object[]);//添加本地触发器(绑定的Activity、触发器类、触发器构造方法参数)
 ```
-不再使用的时候，需要注销当前对象和停止触发器
+不再使用的时候，需要注销当前对象
 ```java
-customTrigger.stopTrigger();
 eventTriggerBus.unregister(object)
 ```
 另外，经常会用到全局触发器，可以在Application初始化的时候，将实例化触发器即可，下面demo有使用详解
@@ -157,10 +153,10 @@ public class TimerTriggerActivity extends AppCompatActivity {
         //获取EventTriggerBus并且注册当前类
         mEventTriggerBus = EventTriggerBus.getInstance();
         mEventTriggerBus.register(this);
-        //初始化触发器
-        mTimerTrigger = new TimerTrigger(mEventTriggerBus, 1000);//1s间隔
-        mTimerTrigger.setOwner(this);//设置触发器所有者为当前owner
-        mTimerTrigger.setup();
+        //加载本地触发器
+        mEventTriggerBus.installLocalTrigger(this,
+                TimerTrigger.class, new Object[]{mEventTriggerBus, 1000})
+                        .forceCallLocalTrigger(this, TimerTrigger.class);
     }
 
     /**
@@ -201,11 +197,10 @@ public class DemoApplication extends Application{
      * */
     private void setupGlobalTrigger() {
         EventTriggerBus eventTriggerBus = EventTriggerBus.getInstance();
+        eventTriggerBus.init(this);
 
-        /**添加网络状态变化的触发器*/
-        Trigger networkTrigger = new NetworkTrigger(eventTriggerBus, this);
-        networkTrigger.setup();
-        eventTriggerBus.addGlobalTrigger(networkTrigger);
+        eventTriggerBus.installGlobalTrigger(NetworkTrigger.class,
+                new Object[]{ eventTriggerBus, this});
     }
 
     @Override
