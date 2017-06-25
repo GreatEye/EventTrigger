@@ -64,7 +64,8 @@ public class EventTriggerBus implements Observer{
 
     /**
      * 添加全局监听之前初始化操作
-     * @param application
+     * @param application 应用Application
+     * @return 返回实例
      * */
     public EventTriggerBus init(Application application) {
         if(application == null) {

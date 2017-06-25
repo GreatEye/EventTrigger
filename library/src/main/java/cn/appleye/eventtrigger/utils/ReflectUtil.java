@@ -15,6 +15,7 @@ public class ReflectUtil {
      * 根据类和参数获取实例
      * @param clz 类名
      * @param args 构造方法参数
+     * @return 返回对象
      * */
     public static Object newInstance(Class<?> clz, Object[] args){
         try{
