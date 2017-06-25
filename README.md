@@ -79,8 +79,8 @@ public class TimerTrigger extends AbstractTrigger{
 
     @Override
     public void forceTrigger() {//强制调用
-        //移除延迟消息
-        mHandler.removeMessages(MSG_DELAY);
+        //移除所有消息
+        mHandler.removeCallbacksAndMessages(null);
         //立刻执行
         mHandler.sendEmptyMessage(MSG_DELAY);
     }
